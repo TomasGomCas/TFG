@@ -1,5 +1,5 @@
 package modelo;
 
-public class OperationSum {
+public class OperationSum extends Operation{
 
 }

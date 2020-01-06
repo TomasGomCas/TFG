@@ -13,7 +13,7 @@ public class ProgramRest extends Program{
 	// CONSTRUCTORS
 	public ProgramRest() {
 		super();
-		services = new LinkedList< 	Service>();
+		services = new LinkedList<Service>();
 	}
 	
 	public ProgramRest(LinkedList<Service> services) {

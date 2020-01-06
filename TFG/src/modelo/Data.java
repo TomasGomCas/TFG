@@ -3,39 +3,77 @@ package modelo;
 public class Data {
 	
 	// ATRIBUTES
+	private String name;
 	private boolean input;
 	private String value;
+	private DataType dataType;
+	private String address;
 	
 	// CONSTRUCTORS
 	public Data() {
 		super();
-	}
-	public Data(boolean input, String value) {
-		super();
-		this.input = input;
-		this.value = value;
+		dataType= DataType.dataString;
 	}
 	
+	public Data(String name, boolean input, String value, DataType dataType, String address) {
+		super();
+		this.name = name;
+		this.input = input;
+		this.value = value;
+		this.dataType = dataType;
+		this.address = address;
+	}
+
 	// METHODS
 	
 	// DELEGATED METHODS
 	@Override
 	public String toString() {
-		return "Data [input=" + input + ", value=" + value + "]";
+		return "Data [name=" + name + ", input=" + input + ", value=" + value + ", dataType=" + dataType + ", address="
+				+ address + "]";
 	}
 	
 	// GETTERS AND SETTERS
-	public boolean isEntrada() {
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isInput() {
 		return input;
 	}
-	public void setEntrada(boolean entrada) {
-		this.input = entrada;
+
+	public void setInput(boolean input) {
+		this.input = input;
 	}
-	public String getValor() {
+
+	public String getValue() {
 		return value;
 	}
-	public void setValor(String valor) {
-		this.value = valor;
+
+	public void setValue(String value) {
+		this.value = value;
 	}
+
+	public DataType getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(DataType dataType) {
+		this.dataType = dataType;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	
+	
 	
 }

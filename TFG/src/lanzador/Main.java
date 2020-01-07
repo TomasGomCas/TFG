@@ -13,14 +13,13 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		//WritterSpring a = new WritterSpring();
-		//a.Copiar(new File("target\\baseCode\\gs-rest-service-complete"), new File("target\\generatedCode"));
-		
+		WritterSpring a = new WritterSpring();	
 		ReaderSpring reader = new ReaderSpring();
+		
 		reader.read();
 		
-		System.out.println("PROGRAM: " + Application.getInstance().getProgram().toString());
-		
+		a.createControllerFile();
+		a.writeFile(a.writeController());
 		
 	}
 

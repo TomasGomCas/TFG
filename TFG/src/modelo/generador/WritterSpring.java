@@ -1,19 +1,28 @@
 package modelo.generador;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.LinkedList;
 
 import interfaces.Writter;
+import modelo.Application;
+import modelo.Data;
+import modelo.Service;
+import modelo.rest.ProgramRest;
 
 public class WritterSpring implements Writter{
 
-	private int  aux=0;  
-	private File FO=new File("TFG\\target\\baseCode\\prueba");
-	private File FD=new File("TFG\\target\\generatedCode");
+	private int  aux = 0;  
+	private File FO = new File("TFG\\target\\baseCode\\prueba");
+	private File FD = new File("TFG\\target\\generatedCode");
+	private File fichero = new File ("target\\generatedCode\\gs-rest-service-complete\\src\\main\\java\\lanzador\\Controller.java");
 
 	// METHODS
 	@Override
@@ -107,4 +116,96 @@ public class WritterSpring implements Writter{
    }
 }
 
+	public void createControllerFile() {
+		
+		try {
+			  // A partir del objeto File creamos el fichero físicamente
+			  if (fichero.createNewFile())
+			    System.out.println("El fichero se ha creado correctamente");
+			  else
+			    System.out.println("No ha podido ser creado el fichero");
+			} catch (IOException ioe) {
+			  ioe.printStackTrace();
+			}
+		
+	}
+	
+	public void writeFile(String string) {
+		
+	    BufferedWriter writer;
+		try {
+			writer = new BufferedWriter(new FileWriter(fichero));
+		    writer.write(string);
+		    writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+//	public void pruebaCreateFile() {}
+//		
+//	
+//	private String writeMapping(String string,String mapping) {
+//		
+//		return string = string + "\n@RequestMapping(\"/" + mapping + "\")";
+//	}
+//	
+//	
+//	private String writeMethodHeader(String string,String returnType,LinkedList<Data> input) {
+//		return string = string + "\n" + returnType;
+//	}
+	
+	private String writeService(Service service) {
+		
+		String str = "";
+		str += writeServiceHeader(service.getName(), service.getData());
+		
+		str += "\n{"
+				+ "\nreturn null}";
+		
+		return str;
+	}
+	
+	private String writeServiceHeader(String mapping,LinkedList<Data> data) {
+		
+		// ESCRIBIMOS LA CABECERA
+		String string = "\n@RequestMapping(\"/" + mapping + "\")";
+		Data dataAux = null;
+		for(Data i : data) {
+			if(i.isInput()==false) dataAux = i;
+		}
+		string += "\npublic " + "String" + " " + mapping + "(";
+		
+		// ESCRIBIMOS LOS PARAMETROS
+		int j = 0;
+		for(Data i : data) {
+			if(i.isInput()==true) {
+				dataAux = i;
+				string = string + "@RequestParam(value=\" " + dataAux.getName() + "\") " + dataAux.getDataType().toString() + " " + dataAux.getName() +"";
+			}
+			
+			if(j<data.size()-2) string = string + ",";
+			j++;
+		}		
+		
+		string += ")";
+		return string;
+	}
+	
+	public String writeController() {
+		
+		String string = Constants.SPRING_CONTROLLER;
+		
+		ProgramRest rest = (ProgramRest) Application.getInstance().getProgram();
+		
+		for(Service service : rest.getServices()) {
+			string = string + writeService(service);
+		}
+		
+		string = string + "}" ;
+		return string;
+	}
+	
 }

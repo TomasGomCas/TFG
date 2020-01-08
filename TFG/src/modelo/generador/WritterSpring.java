@@ -1,13 +1,11 @@
 package modelo.generador;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.LinkedList;
 
@@ -80,38 +78,26 @@ public class WritterSpring implements Writter{
         
 }
 	
-	private static void copyFile(File FO,File FD){
+	private void copyFile(File FO,File FD){
         try {
-        //Si el archivo a copiar existe
         if(FO.exists()){
             String copiar="S";
-            //si el fichero destino ya existe
             if(FD.exists()){
-              // System.out.println("El fichero ya existe, Desea Sobre Escribir:S/N ");
-               //copiar = ( new BufferedReader(new InputStreamReader(System.in))).readLine();
             }
-            //si puedo copiar
             copiar = "S";
-            if(copiar.toUpperCase().equals("S")){
-                //Flujo de lectura al fichero origen(que se va a copiar)            
+            if(copiar.toUpperCase().equals("S")){            
                 FileInputStream LeeOrigen= new FileInputStream(FO);
-                //Flujo de lectura al fichero destino(donde se va a copiar)
                 OutputStream Salida = new FileOutputStream(FD);
-                //separo un buffer de 1MB de lectura
                 byte[] buffer = new byte[1024];
                 int tamano;
-                //leo el fichero a copiar cada 1MB
                 while ((tamano = LeeOrigen.read(buffer)) > 0) {
-                //Escribe el MB en el fichero destino
                 Salida.write(buffer, 0, tamano);
                 }
-                System.out.println(FO.getName()+" Copiado con Exito!!");
-                //cierra los flujos de lectura y escritura
                 Salida.close();
                 LeeOrigen.close();
             }
             
-        }else{//l fichero a copiar no existe                
+        }else{             
             System.out.println("El fichero a copiar no existe..."+FO.getAbsolutePath());
         }
         

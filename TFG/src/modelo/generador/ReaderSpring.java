@@ -15,17 +15,18 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import interfaces.Reader;
 import modelo.Application;
 import modelo.Data;
+import modelo.DataInput;
+import modelo.DataOutput;
 import modelo.DataType;
+import modelo.ProgramRest;
 import modelo.Service;
 import modelo.ServiceType;
-import modelo.rest.ProgramRest;
 
 public class ReaderSpring implements Reader{
 
-	private File file = new File("C:\\Users\\Tomas\\Desktop\\Repositorios\\Workspace Java\\TFG\\TFG\\target\\excel\\calculos.xlsx");
+	private File file = new File("C:\\Users\\Tomas\\Desktop\\Repositorios\\Workspace Java\\TFG\\TFG\\target\\excel\\excel.xlsx");
 	
 	@Override
 	public void read() {
@@ -40,7 +41,7 @@ public class ReaderSpring implements Reader{
 	        for (int i = 0; i < workbook.getNumberOfSheets() ; i++) {
 	        	
 		        Sheet datatypeSheet = workbook.getSheetAt(i);
-				ProgramRest rest = (ProgramRest) Application.getInstance().getProgram();
+				ProgramRest rest = Application.getInstance().getProgramRest();
 				rest.getServices().add(readService(datatypeSheet));
 
 			}
@@ -56,8 +57,7 @@ public class ReaderSpring implements Reader{
 	}
 	
 	private void init() {
-		ProgramRest rest = new ProgramRest();
-		Application.getInstance().setProgram(rest);
+		Application.getInstance().setProgramRest(new ProgramRest());
 	}
 	
 	private Service readService(Sheet sheet) {
@@ -95,24 +95,22 @@ public class ReaderSpring implements Reader{
             if(cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("Entrada"))
             {
                 // Create the data
-                Data data = new Data();
+                DataInput data = new DataInput();
             	// Read the name of the data
             	Cell currentCell = cellIterator.next();
             	data.setName(currentCell.getStringCellValue());
             	// Read the type of the data
                 currentCell = cellIterator.next();
                 if (currentCell.getCellTypeEnum() == CellType.STRING) {
-            		data.setDataType(DataType.dataString);
+            		data.setDataType(DataType.String);
             		data.setValue(currentCell.getStringCellValue());
             		data.setAddress(currentCell.getAddress().toString());
                 } else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
-            		data.setDataType(DataType.dataInteger);
+            		data.setDataType(DataType.Integer);
             		int aux = (int) currentCell.getNumericCellValue();
             		data.setValue(""+aux);
             		data.setAddress(currentCell.getAddress().toString());
                 }
-                // Set the input of the data
-                data.setInput(true);
                 // Add the data into the data array
                 inputData.add(data);
             }
@@ -137,18 +135,18 @@ public class ReaderSpring implements Reader{
             if(cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("salida"))
             {
                 // Create the data
-                Data data = new Data();
+                DataOutput data = new DataOutput();
             	// Read the name of the data
             	Cell currentCell = cellIterator.next();
             	data.setName(currentCell.getStringCellValue());
             	// Read the type of the data
                 currentCell = cellIterator.next();
                 if (currentCell.getCellTypeEnum() == CellType.STRING) {
-            		data.setDataType(DataType.dataString);
+            		data.setDataType(DataType.String);
             		data.setValue(currentCell.getStringCellValue());
             		data.setAddress(currentCell.getAddress().toString());
                 } else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
-            		data.setDataType(DataType.dataInteger);
+            		data.setDataType(DataType.Integer);
             		int aux = (int) currentCell.getNumericCellValue();
             		data.setValue(""+aux);
             		data.setAddress(currentCell.getAddress().toString());
@@ -157,14 +155,11 @@ public class ReaderSpring implements Reader{
             		data.setValue(currentCell.getCellFormula());
             		data.setAddress(currentCell.getAddress().toString());
                 }
-                // Set the input of the data
-                data.setInput(false);
                 // Add the data into the data array
                 inputData.add(data);
             }
         }
         return inputData;
 	}
-	
 	
 } // END OF CLASS

@@ -1,4 +1,5 @@
-package interfaces;
+
+package modelo.generador;
 
 public interface Writter {
 

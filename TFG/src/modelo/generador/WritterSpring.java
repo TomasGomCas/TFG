@@ -11,31 +11,34 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.LinkedList;
 
-import interfaces.Writter;
 import modelo.Application;
 import modelo.Data;
+import modelo.DataInput;
+import modelo.DataOutput;
+import modelo.ProgramRest;
 import modelo.Service;
-import modelo.rest.ProgramRest;
 
 public class WritterSpring implements Writter{
 
 	private int  aux = 0;  
-	private File FO = new File("TFG\\target\\baseCode\\prueba");
-	private File FD = new File("TFG\\target\\generatedCode");
+	private File FO = new File("target\\baseCode\\gs-rest-service-complete");
+	private File FD = new File("target\\generatedCode");
 	private File fichero = new File ("target\\generatedCode\\gs-rest-service-complete\\src\\main\\java\\lanzador\\Controller.java");
 
 	// METHODS
 	@Override
 	public void write() {
 		aux=0;
-		Copiar(FO,FD);
+		copy(FO,FD);
+		createControllerFile();
+		writeFile(writeController());
 	}
 	
-	public void Copiar(File FO,File FD){
+	private void copy(File FO,File FD){
         //si el origen no es una carpeta
         if(!FO.isDirectory()){
             //Llamo la funcion que lo copia
-            CopiarFichero(FO,FD);
+            copyFile(FO,FD);
         }else{
            //incremento el contador de entradas a esta funci�n 
            aux++; 
@@ -71,23 +74,24 @@ public class WritterSpring implements Writter{
               }
               //uso recursividad y llamo a esta misma funcion has llegar
               //al ultimo elemento    
-              Copiar(FnueOri,FnueDest); 
+              copy(FnueOri,FnueDest); 
            }
         }
         
 }
 	
-	public static void CopiarFichero(File FO,File FD){
+	private static void copyFile(File FO,File FD){
         try {
         //Si el archivo a copiar existe
         if(FO.exists()){
             String copiar="S";
             //si el fichero destino ya existe
             if(FD.exists()){
-               System.out.println("El fichero ya existe, Desea Sobre Escribir:S/N ");
-               copiar = ( new BufferedReader(new InputStreamReader(System.in))).readLine();
+              // System.out.println("El fichero ya existe, Desea Sobre Escribir:S/N ");
+               //copiar = ( new BufferedReader(new InputStreamReader(System.in))).readLine();
             }
             //si puedo copiar
+            copiar = "S";
             if(copiar.toUpperCase().equals("S")){
                 //Flujo de lectura al fichero origen(que se va a copiar)            
                 FileInputStream LeeOrigen= new FileInputStream(FO);
@@ -116,21 +120,17 @@ public class WritterSpring implements Writter{
    }
 }
 
-	public void createControllerFile() {
+	private void createControllerFile() {
 		
 		try {
-			  // A partir del objeto File creamos el fichero físicamente
-			  if (fichero.createNewFile())
-			    System.out.println("El fichero se ha creado correctamente");
-			  else
-			    System.out.println("No ha podido ser creado el fichero");
+			  fichero.createNewFile();
 			} catch (IOException ioe) {
 			  ioe.printStackTrace();
 			}
 		
 	}
 	
-	public void writeFile(String string) {
+	private void writeFile(String string) {
 		
 	    BufferedWriter writer;
 		try {
@@ -144,26 +144,13 @@ public class WritterSpring implements Writter{
 		
 	}
 	
-//	public void pruebaCreateFile() {}
-//		
-//	
-//	private String writeMapping(String string,String mapping) {
-//		
-//		return string = string + "\n@RequestMapping(\"/" + mapping + "\")";
-//	}
-//	
-//	
-//	private String writeMethodHeader(String string,String returnType,LinkedList<Data> input) {
-//		return string = string + "\n" + returnType;
-//	}
-	
 	private String writeService(Service service) {
 		
 		String str = "";
 		str += writeServiceHeader(service.getName(), service.getData());
 		
-		str += "\n{"
-				+ "\nreturn null}";
+		str += "\n\t{"
+				+ "\n\treturn null;\n\t}\n";
 		
 		return str;
 	}
@@ -171,19 +158,19 @@ public class WritterSpring implements Writter{
 	private String writeServiceHeader(String mapping,LinkedList<Data> data) {
 		
 		// ESCRIBIMOS LA CABECERA
-		String string = "\n@RequestMapping(\"/" + mapping + "\")";
+		String string = "\n\t@RequestMapping(\"/" + mapping + "\")";
 		Data dataAux = null;
 		for(Data i : data) {
-			if(i.isInput()==false) dataAux = i;
+			if(i instanceof DataOutput) dataAux = i;
 		}
-		string += "\npublic " + "String" + " " + mapping + "(";
+		string += "\n\tpublic " + getTypeFormula(dataAux.getValue()) + " " + mapping + "(";
 		
 		// ESCRIBIMOS LOS PARAMETROS
 		int j = 0;
 		for(Data i : data) {
-			if(i.isInput()==true) {
+			if(i instanceof DataInput) {
 				dataAux = i;
-				string = string + "@RequestParam(value=\" " + dataAux.getName() + "\") " + dataAux.getDataType().toString() + " " + dataAux.getName() +"";
+				string = string + "@RequestParam(value=\"" + dataAux.getName() + "\") " + dataAux.getDataType().toString() + " " + dataAux.getName() +"";
 			}
 			
 			if(j<data.size()-2) string = string + ",";
@@ -194,18 +181,35 @@ public class WritterSpring implements Writter{
 		return string;
 	}
 	
-	public String writeController() {
+	private String writeController() {
 		
-		String string = Constants.SPRING_CONTROLLER;
+		String string = "package lanzador;\r\n" +
+				"import org.springframework.web.bind.annotation.RequestMapping;\r\n" + 
+				"import org.springframework.web.bind.annotation.RequestParam;\r\n" + 
+				"import org.springframework.web.bind.annotation.RestController;\r\n" + 
+				"\r\n" + 
+				"@RestController\r\n" + 
+				"public class Controller {\n";
 		
-		ProgramRest rest = (ProgramRest) Application.getInstance().getProgram();
+		ProgramRest rest = Application.getInstance().getProgramRest();
 		
 		for(Service service : rest.getServices()) {
 			string = string + writeService(service);
 		}
 		
-		string = string + "}" ;
+		string = string + "\n}" ;
 		return string;
 	}
+	
+	private String getTypeFormula(String formula) {
+		
+		if(formula.contains("SUM") || formula.contains("MINUS")) {
+			return "Integer";
+		} else {
+			return "String";
+		}
+		
+	}
+	
 	
 }

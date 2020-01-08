@@ -4,7 +4,7 @@ public class Application {
 
 	// ATRIBUTES
     private static final Application INSTANCE = new Application();
-    private Program program;
+    private ProgramRest program;
     
     // CONSTRUCTORS
     private Application() { 	
@@ -19,11 +19,11 @@ public class Application {
         return INSTANCE;
     }
 
-	public Program getProgram() {
+	public ProgramRest getProgramRest() {
 		return program;
 	}
 
-	public void setProgram(Program program) {
+	public void setProgramRest(ProgramRest program) {
 		this.program = program;
 	}
     

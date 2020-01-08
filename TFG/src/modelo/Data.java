@@ -4,7 +4,6 @@ public class Data {
 	
 	// ATRIBUTES
 	private String name;
-	private boolean input;
 	private String value;
 	private DataType dataType;
 	private String address;
@@ -12,13 +11,12 @@ public class Data {
 	// CONSTRUCTORS
 	public Data() {
 		super();
-		dataType= DataType.dataString;
+		dataType= DataType.String;
 	}
 	
-	public Data(String name, boolean input, String value, DataType dataType, String address) {
+	public Data(String name, String value, DataType dataType, String address) {
 		super();
 		this.name = name;
-		this.input = input;
 		this.value = value;
 		this.dataType = dataType;
 		this.address = address;
@@ -29,7 +27,7 @@ public class Data {
 	// DELEGATED METHODS
 	@Override
 	public String toString() {
-		return "Data [name=" + name + ", input=" + input + ", value=" + value + ", dataType=" + dataType + ", address="
+		return "Data [name=" + name + ","+ ", value=" + value + ", dataType=" + dataType + ", address="
 				+ address + "]";
 	}
 	
@@ -40,14 +38,6 @@ public class Data {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public boolean isInput() {
-		return input;
-	}
-
-	public void setInput(boolean input) {
-		this.input = input;
 	}
 
 	public String getValue() {

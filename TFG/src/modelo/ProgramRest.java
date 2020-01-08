@@ -1,11 +1,8 @@
-package modelo.rest;
+package modelo;
 
 import java.util.LinkedList;
 
-import modelo.Program;
-import modelo.Service;
-
-public class ProgramRest extends Program{
+public class ProgramRest {
 
 	// ATRIBUTES
 	private LinkedList<Service> services;

@@ -25,10 +25,21 @@ import modelo.ProgramRest;
 import modelo.Service;
 import modelo.ServiceType;
 
+/**
+ * The Class ReaderSpring.
+ */
 public class ReaderSpring implements Reader{
 
+	// ATRIBUTES
+	/** The file. */
 	private File file = new File("target\\excel\\excel.xlsx");
 	
+	// CONSTRUCTORS
+	
+	// METHODS
+	/**
+	 * Read.
+	 */
 	@Override
 	public void read() {
 
@@ -57,10 +68,19 @@ public class ReaderSpring implements Reader{
 		
 	}
 	
+	/**
+	 * Inits the.
+	 */
 	private void init() {
 		Application.getInstance().setProgramRest(new ProgramRest());
 	}
 	
+	/**
+	 * Read service.
+	 *
+	 * @param sheet the sheet
+	 * @return the service
+	 */
 	private Service readService(Sheet sheet) {
 
 		Service service = new Service();
@@ -79,6 +99,12 @@ public class ReaderSpring implements Reader{
 		return service;
 	}
 	
+	/**
+	 * Read input data.
+	 *
+	 * @param sheet the sheet
+	 * @return the linked list
+	 */
 	private LinkedList<Data> readInputData(Sheet sheet) {
 		
 		LinkedList<Data> inputData = new LinkedList<Data>();
@@ -119,6 +145,13 @@ public class ReaderSpring implements Reader{
         return inputData;
 	}
 	
+	/**
+	 * Read output data.
+	 *
+	 * @param sheet the sheet
+	 * @param dataInputs the data inputs
+	 * @return the linked list
+	 */
 	private LinkedList<Data> readOutputData(Sheet sheet,LinkedList<DataInput> dataInputs) {
 		
 		LinkedList<Data> inputData = new LinkedList<Data>();
@@ -168,4 +201,8 @@ public class ReaderSpring implements Reader{
         return inputData;
 	}
 	
-} // END OF CLASS
+	// DELEGATED METHODS
+	
+	// GETTERS AND SETTERS
+	
+}

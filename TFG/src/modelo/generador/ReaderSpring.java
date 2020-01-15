@@ -19,13 +19,15 @@ import modelo.Data;
 import modelo.DataInput;
 import modelo.DataOutput;
 import modelo.DataType;
+import modelo.Operation;
+import modelo.OperationType;
 import modelo.ProgramRest;
 import modelo.Service;
 import modelo.ServiceType;
 
 public class ReaderSpring implements Reader{
 
-	private File file = new File("C:\\Users\\Tomas\\Desktop\\Repositorios\\Workspace Java\\TFG\\TFG\\target\\excel\\excel.xlsx");
+	private File file = new File("target\\excel\\excel.xlsx");
 	
 	@Override
 	public void read() {
@@ -70,7 +72,7 @@ public class ReaderSpring implements Reader{
 			service.getData().add(data);
 		}
 
-		for (Data data : readOutputData(sheet)) {
+		for (Data data : readOutputData(sheet,service.getDataInputs())) {
 			service.getData().add(data);
 		}
 		
@@ -117,7 +119,7 @@ public class ReaderSpring implements Reader{
         return inputData;
 	}
 	
-	private LinkedList<Data> readOutputData(Sheet sheet) {
+	private LinkedList<Data> readOutputData(Sheet sheet,LinkedList<DataInput> dataInputs) {
 		
 		LinkedList<Data> inputData = new LinkedList<Data>();
 		Iterator<Row> iterator = sheet.iterator();
@@ -135,6 +137,7 @@ public class ReaderSpring implements Reader{
             {
                 // Create the data
                 DataOutput data = new DataOutput();
+                Operation operation = new Operation();
             	// Read the name of the data
             	Cell currentCell = cellIterator.next();
             	data.setName(currentCell.getStringCellValue());
@@ -153,7 +156,11 @@ public class ReaderSpring implements Reader{
             		data.setDataType(DataType.dataFormula);
             		data.setValue(currentCell.getCellFormula());
             		data.setAddress(currentCell.getAddress().toString());
+            		operation.setOperationType(OperationType.math);
                 }
+
+                operation.setDataInput(dataInputs);
+                data.setOperation(operation);
                 // Add the data into the data array
                 inputData.add(data);
             }

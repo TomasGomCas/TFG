@@ -7,7 +7,12 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import modelo.Application;
 import modelo.Data;
@@ -136,7 +141,12 @@ public class WritterSpring implements Writter{
 		str += writeServiceHeader(service.getName(), service.getData());
 		
 		str += "\n\t{"
-				+ "\n\treturn null;\n\t}\n";
+				+ "\n\t";
+		
+		str += "return " + writeServiceBody(service) + ";";
+				
+				
+		str += "\n\t}\n";
 		
 		return str;
 	}
@@ -149,7 +159,7 @@ public class WritterSpring implements Writter{
 		for(Data i : data) {
 			if(i instanceof DataOutput) dataAux = i;
 		}
-		string += "\n\tpublic " + getTypeFormula(dataAux.getValue()) + " " + mapping + "(";
+		string += "\n\tpublic " + "Integer" + " " + mapping + "(";
 		
 		// ESCRIBIMOS LOS PARAMETROS
 		int j = 0;
@@ -186,16 +196,22 @@ public class WritterSpring implements Writter{
 		string = string + "\n}" ;
 		return string;
 	}
-	
-	private String getTypeFormula(String formula) {
 		
-		if(formula.contains("SUM") || formula.contains("MINUS")) {
-			return "Integer";
-		} else {
-			return "String";
-		}
+	private String writeServiceBody(Service service) {
 		
+		String string = service.getDataOutput().getValue();
+		
+		 List<String> allMatches = new ArrayList<String>();
+		 Matcher m = Pattern.compile("[A-Z][0-9]*").matcher(service.getDataOutput().getValue());
+		 
+		 while (m.find()) {
+		   allMatches.add(m.group());
+		 }
+		 
+		 for(String st : allMatches) {
+			 string = string.replaceAll(st,service.getDataInputByAddress(st).getName());
+		 }
+		
+		return string;
 	}
-	
-	
 }

@@ -1,7 +1,16 @@
 package modelo;
 
+
+/**
+ * The Enum ServiceType.
+ */
 public enum ServiceType {
 	
-	GET,POST,DELETE;
+	/** The get. */
+	GET,
+	/** The post. */
+	POST,
+	/** The delete. */
+	DELETE;
 
 }

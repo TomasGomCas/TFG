@@ -19,14 +19,27 @@ import modelo.Data;
 import modelo.DataInput;
 import modelo.DataOutput;
 import modelo.DataType;
+import modelo.Operation;
+import modelo.OperationType;
 import modelo.ProgramRest;
 import modelo.Service;
 import modelo.ServiceType;
 
+/**
+ * The Class ReaderSpring.
+ */
 public class ReaderSpring implements Reader{
 
-	private File file = new File("C:\\Users\\Tomas\\Desktop\\Repositorios\\Workspace Java\\TFG\\TFG\\target\\excel\\excel.xlsx");
+	// ATRIBUTES
+	/** The file. */
+	private File file = new File("target\\excel\\excel.xlsx");
 	
+	// CONSTRUCTORS
+	
+	// METHODS
+	/**
+	 * Read.
+	 */
 	@Override
 	public void read() {
 
@@ -55,10 +68,19 @@ public class ReaderSpring implements Reader{
 		
 	}
 	
+	/**
+	 * Inits the.
+	 */
 	private void init() {
 		Application.getInstance().setProgramRest(new ProgramRest());
 	}
 	
+	/**
+	 * Read service.
+	 *
+	 * @param sheet the sheet
+	 * @return the service
+	 */
 	private Service readService(Sheet sheet) {
 
 		Service service = new Service();
@@ -70,13 +92,19 @@ public class ReaderSpring implements Reader{
 			service.getData().add(data);
 		}
 
-		for (Data data : readOutputData(sheet)) {
+		for (Data data : readOutputData(sheet,service.getDataInputs())) {
 			service.getData().add(data);
 		}
 		
 		return service;
 	}
 	
+	/**
+	 * Read input data.
+	 *
+	 * @param sheet the sheet
+	 * @return the linked list
+	 */
 	private LinkedList<Data> readInputData(Sheet sheet) {
 		
 		LinkedList<Data> inputData = new LinkedList<Data>();
@@ -117,7 +145,14 @@ public class ReaderSpring implements Reader{
         return inputData;
 	}
 	
-	private LinkedList<Data> readOutputData(Sheet sheet) {
+	/**
+	 * Read output data.
+	 *
+	 * @param sheet the sheet
+	 * @param dataInputs the data inputs
+	 * @return the linked list
+	 */
+	private LinkedList<Data> readOutputData(Sheet sheet,LinkedList<DataInput> dataInputs) {
 		
 		LinkedList<Data> inputData = new LinkedList<Data>();
 		Iterator<Row> iterator = sheet.iterator();
@@ -135,6 +170,7 @@ public class ReaderSpring implements Reader{
             {
                 // Create the data
                 DataOutput data = new DataOutput();
+                Operation operation = new Operation();
             	// Read the name of the data
             	Cell currentCell = cellIterator.next();
             	data.setName(currentCell.getStringCellValue());
@@ -153,7 +189,11 @@ public class ReaderSpring implements Reader{
             		data.setDataType(DataType.dataFormula);
             		data.setValue(currentCell.getCellFormula());
             		data.setAddress(currentCell.getAddress().toString());
+            		operation.setOperationType(OperationType.math);
                 }
+
+                operation.setDataInput(dataInputs);
+                data.setOperation(operation);
                 // Add the data into the data array
                 inputData.add(data);
             }
@@ -161,4 +201,8 @@ public class ReaderSpring implements Reader{
         return inputData;
 	}
 	
-} // END OF CLASS
+	// DELEGATED METHODS
+	
+	// GETTERS AND SETTERS
+	
+}

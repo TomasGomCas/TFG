@@ -19,6 +19,7 @@ import modelo.DataInput;
 import modelo.DataOutput;
 import modelo.ProgramRest;
 import modelo.Service;
+import modelo.ServiceType;
 
 /**
  * The Class WritterSpring.
@@ -178,7 +179,7 @@ public class WritterSpring implements Writter {
 	private String writeService(Service service) {
 
 		String str = "";
-		str += writeServiceHeader(service.getName(), service.getData());
+		str += writeServiceHeader(service.getName(), service.getData(), service);
 
 		str += "\n\t{" + "\n\t";
 
@@ -196,7 +197,7 @@ public class WritterSpring implements Writter {
 	 * @param data    the data
 	 * @return the string
 	 */
-	private String writeServiceHeader(String mapping, LinkedList<Data> data) {
+	private String writeServiceHeader(String mapping, LinkedList<Data> data, Service service) {
 
 		// ESCRIBIMOS LA CABECERA
 		String string = "\n\t@RequestMapping(\"/" + mapping + "\")";
@@ -221,6 +222,15 @@ public class WritterSpring implements Writter {
 			j++;
 		}
 
+		if (service.getTipoServicio() == ServiceType.POST) {
+			string += ",@RequestBody String json";
+//			PONER EN LA FUNCIONALIDAD LA TRANSFORMACION A JSONOBJECT
+//			JsonReader jsonReader = Json.createReader(new StringReader(json));
+//			JsonObject object = jsonReader.readObject();
+//			jsonReader.close();
+
+		}
+
 		string += ")";
 		return string;
 	}
@@ -233,6 +243,7 @@ public class WritterSpring implements Writter {
 	private String writeController() {
 
 		String string = "package lanzador;\r\n" + "import org.springframework.web.bind.annotation.RequestMapping;\r\n"
+				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
 				+ "import org.springframework.web.bind.annotation.RequestParam;\r\n"
 				+ "import org.springframework.web.bind.annotation.RestController;\r\n" + "\r\n" + "@RestController\r\n"
 				+ "public class Controller {\n";

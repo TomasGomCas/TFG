@@ -28,14 +28,14 @@ import modelo.ServiceType;
 /**
  * The Class ReaderSpring.
  */
-public class ReaderSpring implements Reader{
+public class ReaderSpring implements Reader {
 
 	// ATRIBUTES
 	/** The file. */
 	private File file = new File("target\\excel\\excel.xlsx");
-	
+
 	// CONSTRUCTORS
-	
+
 	// METHODS
 	/**
 	 * Read.
@@ -44,20 +44,20 @@ public class ReaderSpring implements Reader{
 	public void read() {
 
 		init();
-		
-        FileInputStream excelFile = null;
+
+		FileInputStream excelFile = null;
 		try {
 			excelFile = new FileInputStream(file);
-	        Workbook workbook = new XSSFWorkbook(excelFile);
-	        
-	        for (int i = 0; i < workbook.getNumberOfSheets() ; i++) {
-	        	
-		        Sheet datatypeSheet = workbook.getSheetAt(i);
+			Workbook workbook = new XSSFWorkbook(excelFile);
+
+			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+
+				Sheet datatypeSheet = workbook.getSheetAt(i);
 				ProgramRest rest = Application.getInstance().getProgramRest();
 				rest.getServices().add(readService(datatypeSheet));
 
 			}
-	        
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,16 +65,16 @@ public class ReaderSpring implements Reader{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Inits the.
 	 */
 	private void init() {
 		Application.getInstance().setProgramRest(new ProgramRest());
 	}
-	
+
 	/**
 	 * Read service.
 	 *
@@ -84,21 +84,26 @@ public class ReaderSpring implements Reader{
 	private Service readService(Sheet sheet) {
 
 		Service service = new Service();
-		
-		service.setTipoServicio(ServiceType.GET);
+
+		if (sheet.getRow(0).getCell(1).toString().equalsIgnoreCase("post")) {
+			service.setTipoServicio(ServiceType.POST);
+		} else {
+			service.setTipoServicio(ServiceType.GET);
+		}
+
 		service.setName(sheet.getSheetName());
-		
+
 		for (Data data : readInputData(sheet)) {
 			service.getData().add(data);
 		}
 
-		for (Data data : readOutputData(sheet,service.getDataInputs())) {
+		for (Data data : readOutputData(sheet, service.getDataInputs())) {
 			service.getData().add(data);
 		}
-		
+
 		return service;
 	}
-	
+
 	/**
 	 * Read input data.
 	 *
@@ -106,103 +111,101 @@ public class ReaderSpring implements Reader{
 	 * @return the linked list
 	 */
 	private LinkedList<Data> readInputData(Sheet sheet) {
-		
+
 		LinkedList<Data> inputData = new LinkedList<Data>();
 		Iterator<Row> iterator = sheet.iterator();
-		
-        while (iterator.hasNext()) {
 
-            Row currentRow = iterator.next();
-            Iterator<Cell> cellIterator = currentRow.iterator();
-            if(cellIterator.hasNext()) {
-            	cellIterator.next();
-            }
+		while (iterator.hasNext()) {
 
-            // If data, enter
-            if(cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("Entrada"))
-            {
-                // Create the data
-                DataInput data = new DataInput();
-            	// Read the name of the data
-            	Cell currentCell = cellIterator.next();
-            	data.setName(currentCell.getStringCellValue());
-            	// Read the type of the data
-                currentCell = cellIterator.next();
-                if (currentCell.getCellTypeEnum() == CellType.STRING) {
-            		data.setDataType(DataType.String);
-            		data.setValue(currentCell.getStringCellValue());
-            		data.setAddress(currentCell.getAddress().toString());
-                } else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
-            		data.setDataType(DataType.Integer);
-            		int aux = (int) currentCell.getNumericCellValue();
-            		data.setValue(""+aux);
-            		data.setAddress(currentCell.getAddress().toString());
-                }
-                // Add the data into the data array
-                inputData.add(data);
-            }
-        }
-        return inputData;
+			Row currentRow = iterator.next();
+			Iterator<Cell> cellIterator = currentRow.iterator();
+			if (cellIterator.hasNext()) {
+				cellIterator.next();
+			}
+
+			// If data, enter
+			if (cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("Entrada")) {
+				// Create the data
+				DataInput data = new DataInput();
+				// Read the name of the data
+				Cell currentCell = cellIterator.next();
+				data.setName(currentCell.getStringCellValue());
+				// Read the type of the data
+				currentCell = cellIterator.next();
+				if (currentCell.getCellTypeEnum() == CellType.STRING) {
+					data.setDataType(DataType.String);
+					data.setValue(currentCell.getStringCellValue());
+					data.setAddress(currentCell.getAddress().toString());
+				} else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
+					data.setDataType(DataType.Integer);
+					int aux = (int) currentCell.getNumericCellValue();
+					data.setValue("" + aux);
+					data.setAddress(currentCell.getAddress().toString());
+				}
+				// Add the data into the data array
+				inputData.add(data);
+			}
+		}
+		return inputData;
 	}
-	
+
 	/**
 	 * Read output data.
 	 *
-	 * @param sheet the sheet
+	 * @param sheet      the sheet
 	 * @param dataInputs the data inputs
 	 * @return the linked list
 	 */
-	private LinkedList<Data> readOutputData(Sheet sheet,LinkedList<DataInput> dataInputs) {
-		
+	private LinkedList<Data> readOutputData(Sheet sheet, LinkedList<DataInput> dataInputs) {
+
 		LinkedList<Data> inputData = new LinkedList<Data>();
 		Iterator<Row> iterator = sheet.iterator();
-		
-        while (iterator.hasNext()) {
 
-            Row currentRow = iterator.next();
-            Iterator<Cell> cellIterator = currentRow.iterator();
-            if(cellIterator.hasNext()) {
-            	cellIterator.next();
-            }
+		while (iterator.hasNext()) {
 
-            // If data, enter
-            if(cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("salida"))
-            {
-                // Create the data
-                DataOutput data = new DataOutput();
-                Operation operation = new Operation();
-            	// Read the name of the data
-            	Cell currentCell = cellIterator.next();
-            	data.setName(currentCell.getStringCellValue());
-            	// Read the type of the data
-                currentCell = cellIterator.next();
-                if (currentCell.getCellTypeEnum() == CellType.STRING) {
-            		data.setDataType(DataType.String);
-            		data.setValue(currentCell.getStringCellValue());
-            		data.setAddress(currentCell.getAddress().toString());
-                } else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
-            		data.setDataType(DataType.Integer);
-            		int aux = (int) currentCell.getNumericCellValue();
-            		data.setValue(""+aux);
-            		data.setAddress(currentCell.getAddress().toString());
-                } else if (currentCell.getCellTypeEnum() == CellType.FORMULA) {
-            		data.setDataType(DataType.dataFormula);
-            		data.setValue(currentCell.getCellFormula());
-            		data.setAddress(currentCell.getAddress().toString());
-            		operation.setOperationType(OperationType.math);
-                }
+			Row currentRow = iterator.next();
+			Iterator<Cell> cellIterator = currentRow.iterator();
+			if (cellIterator.hasNext()) {
+				cellIterator.next();
+			}
 
-                operation.setDataInput(dataInputs);
-                data.setOperation(operation);
-                // Add the data into the data array
-                inputData.add(data);
-            }
-        }
-        return inputData;
+			// If data, enter
+			if (cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("salida")) {
+				// Create the data
+				DataOutput data = new DataOutput();
+				Operation operation = new Operation();
+				// Read the name of the data
+				Cell currentCell = cellIterator.next();
+				data.setName(currentCell.getStringCellValue());
+				// Read the type of the data
+				currentCell = cellIterator.next();
+				if (currentCell.getCellTypeEnum() == CellType.STRING) {
+					data.setDataType(DataType.String);
+					data.setValue(currentCell.getStringCellValue());
+					data.setAddress(currentCell.getAddress().toString());
+				} else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
+					data.setDataType(DataType.Integer);
+					int aux = (int) currentCell.getNumericCellValue();
+					data.setValue("" + aux);
+					data.setAddress(currentCell.getAddress().toString());
+				} else if (currentCell.getCellTypeEnum() == CellType.FORMULA) {
+					data.setDataType(DataType.dataFormula);
+					data.setValue(currentCell.getCellFormula());
+					data.setAddress(currentCell.getAddress().toString());
+					operation.setOperationType(OperationType.math);
+				}
+
+				operation.setDataInput(dataInputs);
+				data.setOperation(operation);
+				// Add the data into the data array
+				inputData.add(data);
+			}
+		}
+		return inputData;
 	}
-	
+
 	// DELEGATED METHODS
-	
+
 	// GETTERS AND SETTERS
-	
+
 }

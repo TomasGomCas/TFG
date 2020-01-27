@@ -101,6 +101,10 @@ public class ReaderSpring implements Reader {
 			service.getData().add(data);
 		}
 
+		for (DataInput data : readBodyData(sheet)) {
+			service.getBody().getDataInputs().add(data);
+		}
+
 		return service;
 	}
 
@@ -202,6 +206,46 @@ public class ReaderSpring implements Reader {
 			}
 		}
 		return inputData;
+	}
+
+	private LinkedList<DataInput> readBodyData(Sheet sheet) {
+
+		LinkedList<DataInput> inputData = new LinkedList<DataInput>();
+		Iterator<Row> iterator = sheet.iterator();
+
+		while (iterator.hasNext()) {
+
+			Row currentRow = iterator.next();
+			Iterator<Cell> cellIterator = currentRow.iterator();
+			if (cellIterator.hasNext()) {
+				cellIterator.next();
+			}
+
+			// If data, enter
+			if (cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("body")) {
+				// Create the data
+				DataInput data = new DataInput();
+				// Read the name of the data
+				Cell currentCell = cellIterator.next();
+				data.setName(currentCell.getStringCellValue());
+				// Read the type of the data
+				currentCell = cellIterator.next();
+				if (currentCell.getCellTypeEnum() == CellType.STRING) {
+					data.setDataType(DataType.String);
+					data.setValue(currentCell.getStringCellValue());
+					data.setAddress(currentCell.getAddress().toString());
+				} else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
+					data.setDataType(DataType.Integer);
+					int aux = (int) currentCell.getNumericCellValue();
+					data.setValue("" + aux);
+					data.setAddress(currentCell.getAddress().toString());
+				}
+				// Add the data into the data array
+				inputData.add(data);
+			}
+		}
+		return inputData;
+
 	}
 
 	// DELEGATED METHODS

@@ -1,41 +1,42 @@
 package modelo;
 
-
 // TODO: Auto-generated Javadoc
 /**
  * The Class Data.
  */
 public class Data {
-	
+
 	// ATRIBUTES
 	/** The name */
 	private String name;
-	
+
 	/** The value. */
 	private String value;
-	
+
 	/** The data type. */
 	private DataType dataType;
-	
+
 	/** The address. */
 	private String address;
-	
+
+	private boolean isArray;
+
 	// CONSTRUCTORS
 	/**
 	 * Instantiates a new data.
 	 */
 	public Data() {
 		super();
-		dataType= DataType.String;
+		dataType = DataType.String;
 	}
-	
+
 	/**
 	 * Instantiates a new data.
 	 *
-	 * @param name the name
-	 * @param value the value
+	 * @param name     the name
+	 * @param value    the value
 	 * @param dataType the data type
-	 * @param address the address
+	 * @param address  the address
 	 */
 	public Data(String name, String value, DataType dataType, String address) {
 		super();
@@ -43,22 +44,18 @@ public class Data {
 		this.value = value;
 		this.dataType = dataType;
 		this.address = address;
+		this.isArray = false;
 	}
 
 	// METHODS
-	
+
 	// DELEGATED METHODS
-	/**
-	 * To string.
-	 *
-	 * @return the string
-	 */
 	@Override
 	public String toString() {
-		return "Data [name=" + name + ","+ ", value=" + value + ", dataType=" + dataType + ", address="
-				+ address + "]";
+		return "Data [name=" + name + ", value=" + value + ", dataType=" + dataType + ", address=" + address
+				+ ", isArray=" + isArray + "]";
 	}
-	
+
 	// GETTERS AND SETTERS
 	/**
 	 * Gets the name.
@@ -131,5 +128,13 @@ public class Data {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	
+
+	public boolean isArray() {
+		return isArray;
+	}
+
+	public void setArray(boolean isArray) {
+		this.isArray = isArray;
+	}
+
 }

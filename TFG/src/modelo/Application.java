@@ -12,44 +12,44 @@ public class Application {
 
 	// ATRIBUTES
 	/** The Constant INSTANCE. */
-    private static final Application INSTANCE = new Application();
-    
-    /** The program. */
-    private ProgramRest program = new ProgramRest();
-    
-    /** The reader spring. */
-    private Reader readerSpring = new ReaderSpring();
-    
-    /** The writter spring. */
-    private Writter writterSpring = new WritterSpring();
+	private static final Application INSTANCE = new Application();
 
-    // CONSTRUCTORS
-    /**
-     * Instantiates a new application.
-     */
-    private Application() { 	
-    }
+	/** The program. */
+	private ProgramRest program = new ProgramRest();
 
-    // METHODS
-    /**
-     * Generate program spring.
-     */
-    public void generateProgramSpring() {
-    	readerSpring.read();
-    	writterSpring.write();
-    }
-    
-    // DELEGATED METHODS
-    
-    // GETTERS AND SETTERS
-    /**
-     * Gets the single instance of Application.
-     *
-     * @return single instance of Application
-     */
-    public static Application getInstance() {
-        return INSTANCE;
-    }
+	/** The reader spring. */
+	private Reader readerSpring = new ReaderSpring();
+
+	/** The writter spring. */
+	private Writter writterSpring = new WritterSpring();
+
+	// CONSTRUCTORS
+	/**
+	 * Instantiates a new application.
+	 */
+	private Application() {
+	}
+
+	// METHODS
+	/**
+	 * Generate program spring.
+	 */
+	public void generateProgramSpring() {
+		readerSpring.read();
+		writterSpring.write();
+	}
+
+	// DELEGATED METHODS
+
+	// GETTERS AND SETTERS
+	/**
+	 * Gets the single instance of Application.
+	 *
+	 * @return single instance of Application
+	 */
+	public static Application getInstance() {
+		return INSTANCE;
+	}
 
 	/**
 	 * Gets the program rest.
@@ -68,6 +68,5 @@ public class Application {
 	public void setProgramRest(ProgramRest program) {
 		this.program = program;
 	}
-    
-    
+
 }

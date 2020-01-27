@@ -25,4 +25,10 @@ public class Controller {
 	return (valor1/4)*valor2+valor3*valor4;
 	}
 
+	@RequestMapping("/post")
+	public Integer post(@RequestParam(value="valor1") Integer valor1,@RequestBody String json)
+	{
+	return 5;
+	}
+
 }

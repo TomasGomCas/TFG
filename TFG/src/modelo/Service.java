@@ -6,17 +6,19 @@ import java.util.LinkedList;
  * The Class Service.
  */
 public class Service {
-	
+
 	// ATRIBUTES
 	/** The tipo servicio. */
 	private ServiceType tipoServicio;
-	
+
 	/** The data. */
 	private LinkedList<Data> data;
-	
+
 	/** The name. */
 	private String name;
-	
+
+	private Body body;
+
 	// CONSTRUCTORS
 	/**
 	 * Instantiates a new service.
@@ -24,20 +26,22 @@ public class Service {
 	public Service() {
 		super();
 		this.data = new LinkedList<Data>();
+		this.body = new Body();
 	}
-	
+
 	/**
 	 * Instantiates a new service.
 	 *
 	 * @param tipoServicio the tipo servicio
-	 * @param data the data
-	 * @param name the name
+	 * @param data         the data
+	 * @param name         the name
 	 */
 	public Service(ServiceType tipoServicio, LinkedList<Data> data, String name) {
 		super();
 		this.tipoServicio = tipoServicio;
 		this.data = data;
 		this.name = name;
+		this.body = new Body();
 	}
 
 	// METHODS
@@ -46,14 +50,15 @@ public class Service {
 	 *
 	 * @return the data inputs
 	 */
-	public LinkedList<DataInput> getDataInputs(){
-		
+	public LinkedList<DataInput> getDataInputs() {
+
 		LinkedList<DataInput> dataInputs = new LinkedList<DataInput>();
-		
+
 		for (Data data : this.data) {
-			if(data instanceof DataInput) dataInputs.add((DataInput) data);
+			if (data instanceof DataInput)
+				dataInputs.add((DataInput) data);
 		}
-	
+
 		return dataInputs;
 	}
 
@@ -64,38 +69,35 @@ public class Service {
 	 * @return the data input by address
 	 */
 	public DataInput getDataInputByAddress(String address) {
-		
+
 		for (DataInput data : getDataInputs()) {
-			if(data.getAddress().equalsIgnoreCase(address)) return data;
+			if (data.getAddress().equalsIgnoreCase(address))
+				return data;
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Gets the data output.
 	 *
 	 * @return the data output
 	 */
 	public DataOutput getDataOutput() {
-			
+
 		for (Data data : this.data) {
-			if(data instanceof DataOutput) return (DataOutput) data;
+			if (data instanceof DataOutput)
+				return (DataOutput) data;
 		}
 		return null;
 	}
-	
+
 	// DELEGATED METHODS
-	/**
-	 * To string.
-	 *
-	 * @return the string
-	 */
 	@Override
 	public String toString() {
-		return "Service [tipoServicio=" + tipoServicio + ", data=" + data + ", name=" + name + "]";
+		return "Service [tipoServicio=" + tipoServicio + ", data=" + data + ", name=" + name + ", body=" + body + "]";
 	}
-	
+
 	// GETTERS AND SETTERS
 	/**
 	 * Gets the tipo servicio.
@@ -150,8 +152,13 @@ public class Service {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
 
-	
+	public Body getBody() {
+		return body;
+	}
+
+	public void setBody(Body body) {
+		this.body = body;
+	}
+
 }

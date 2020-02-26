@@ -2,3 +2,6 @@ Crear metodo en ReaderSpring - readBodyData(sheet) - OK (26/02/2020)
 Crear metodo writeFileClass - OK 
 Crear metodo writeBodyClass - OK 
 ---------- COMMIT ----------
+Crear arrays en metodos POST
+Crear funcionamiento en metodos POST
+Crear base datos

@@ -50,6 +50,7 @@ public class WritterSpring implements Writter {
 		copy(FO, FD);
 		createControllerFile();
 		writeFile(writeController());
+		writeFileClass();
 	}
 
 	/**
@@ -170,6 +171,24 @@ public class WritterSpring implements Writter {
 
 	}
 
+	private void writeFileClass() {
+
+		for (Service service : Application.getInstance().getProgramRest().getServices()) {
+			if (service.getTipoServicio() == ServiceType.POST) {
+				BufferedWriter writer;
+				try {
+					writer = new BufferedWriter(new FileWriter(
+							"target\\generatedCode\\gs-rest-service-complete\\src\\main\\java\\lanzador\\"
+									+ service.getName() + "Body.java"));
+					writer.write(writeBodyClass(service));
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	/**
 	 * Write service.
 	 *
@@ -223,7 +242,7 @@ public class WritterSpring implements Writter {
 		}
 
 		if (service.getTipoServicio() == ServiceType.POST) {
-			string += ",@RequestBody String json";
+			string += ",@RequestBody " + service.getName() + "Body json";
 //			PONER EN LA FUNCIONALIDAD LA TRANSFORMACION A JSONOBJECT
 //			JsonReader jsonReader = Json.createReader(new StringReader(json));
 //			JsonObject object = jsonReader.readObject();
@@ -280,5 +299,31 @@ public class WritterSpring implements Writter {
 		}
 
 		return string;
+	}
+
+	private String writeBodyClass(Service service) {
+
+		String retorno = "package lanzador;" + "\npublic class " + service.getName() + "Body {\n\n";
+
+		// Se escriben los parametros
+		for (DataInput data : service.getBody().getDataInputs()) {
+			retorno += "private String " + data.getName() + ";\n\n";
+		}
+
+		// Se escriben los getters
+		for (DataInput data : service.getBody().getDataInputs()) {
+			retorno += "	public String get" + data.getName() + "() {\n" + "		return " + data.getName() + ";\n"
+					+ "	}\n\n" + "";
+		}
+
+		// Se escriben los setters TODO
+		for (DataInput data : service.getBody().getDataInputs()) {
+			retorno += "	public void set" + data.getName() + "(String " + data.getName() + ") {\n" + "		this."
+					+ data.getName() + " = " + data.getName() + ";\n" + "	}\n\n ";
+		}
+
+		retorno += "\n}";
+
+		return retorno;
 	}
 }

@@ -20,13 +20,19 @@ public class Controller {
 	}
 
 	@RequestMapping("/compleja")
-	public Integer compleja(@RequestParam(value="valor1") Integer valor1,@RequestParam(value="valor2") Integer valor2,@RequestParam(value="valor3") Integer valor3,@RequestParam(value="valor4") Integer valor4,@RequestBody String json)
+	public Integer compleja(@RequestParam(value="valor1") Integer valor1,@RequestParam(value="valor2") Integer valor2,@RequestParam(value="valor3") Integer valor3,@RequestParam(value="valor4") Integer valor4,@RequestBody complejaBody json)
 	{
 	return (valor1/4)*valor2+valor3*valor4;
 	}
 
 	@RequestMapping("/post")
-	public Integer post(@RequestParam(value="valor1") Integer valor1,@RequestBody String json)
+	public Integer post(@RequestParam(value="valor1") Integer valor1,@RequestBody postBody json)
+	{
+	return 5;
+	}
+
+	@RequestMapping("/post2")
+	public Integer post2(,@RequestBody post2Body json)
 	{
 	return 5;
 	}

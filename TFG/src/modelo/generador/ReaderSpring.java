@@ -234,11 +234,13 @@ public class ReaderSpring implements Reader {
 					data.setDataType(DataType.String);
 					data.setValue(currentCell.getStringCellValue());
 					data.setAddress(currentCell.getAddress().toString());
+					if(cellIterator.hasNext()) data.setArray(true);
 				} else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
 					data.setDataType(DataType.Integer);
 					int aux = (int) currentCell.getNumericCellValue();
 					data.setValue("" + aux);
 					data.setAddress(currentCell.getAddress().toString());
+					if(cellIterator.hasNext()) data.setArray(true);
 				}
 				// Add the data into the data array
 				inputData.add(data);

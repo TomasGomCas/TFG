@@ -303,22 +303,27 @@ public class WritterSpring implements Writter {
 
 	private String writeBodyClass(Service service) {
 
-		String retorno = "package lanzador;" + "\npublic class " + service.getName() + "Body {\n\n";
+		String retorno = "package lanzador; \n\n import java.util.LinkedList;" + "\npublic class " + service.getName() + "Body {\n\n";
 
 		// Se escriben los parametros
 		for (DataInput data : service.getBody().getDataInputs()) {
-			retorno += "private String " + data.getName() + ";\n\n";
+			if(data.isArray() == false) retorno += "private String " + data.getName() + ";\n\n";
+			else retorno += "private LinkedList<String> " + data.getName() + ";\n\n";
 		}
 
 		// Se escriben los getters
 		for (DataInput data : service.getBody().getDataInputs()) {
-			retorno += "	public String get" + data.getName() + "() {\n" + "		return " + data.getName() + ";\n"
+			if(data.isArray() == false) retorno += "	public String get" + data.getName() + "() {\n" + "		return " + data.getName() + ";\n"
+					+ "	}\n\n" + "";
+			else retorno += "	public LinkedList<String> get" + data.getName() + "() {\n" + "		return " + data.getName() + ";\n"
 					+ "	}\n\n" + "";
 		}
 
 		// Se escriben los setters TODO
 		for (DataInput data : service.getBody().getDataInputs()) {
-			retorno += "	public void set" + data.getName() + "(String " + data.getName() + ") {\n" + "		this."
+			if(data.isArray() == false) retorno += "	public void set" + data.getName() + "(String " + data.getName() + ") {\n" + "		this."
+					+ data.getName() + " = " + data.getName() + ";\n" + "	}\n\n ";
+			else retorno += "	public void set" + data.getName() + "(LinkedList<String> " + data.getName() + ") {\n" + "		this."
 					+ data.getName() + " = " + data.getName() + ";\n" + "	}\n\n ";
 		}
 

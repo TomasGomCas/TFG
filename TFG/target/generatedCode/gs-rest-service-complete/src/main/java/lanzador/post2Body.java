@@ -1,11 +1,13 @@
-package lanzador;
+package lanzador; 
+
+ import java.util.LinkedList;
 public class post2Body {
 
-private String nombre;
+private LinkedList<String> nombre;
 
 private String dinero;
 
-	public String getnombre() {
+	public LinkedList<String> getnombre() {
 		return nombre;
 	}
 
@@ -13,7 +15,7 @@ private String dinero;
 		return dinero;
 	}
 
-	public void setnombre(String nombre) {
+	public void setnombre(LinkedList<String> nombre) {
 		this.nombre = nombre;
 	}
 

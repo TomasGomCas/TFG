@@ -1,25 +1,25 @@
 package lanzador; 
 
  import java.util.LinkedList;
-public class postBody {
+public class PostBody {
 
-private String nombre;
+private LinkedList<String> nombre;
 
-private String dinero;
+private LinkedList<String> dinero;
 
-	public String getnombre() {
+	public LinkedList<String> getnombre() {
 		return nombre;
 	}
 
-	public String getdinero() {
+	public LinkedList<String> getdinero() {
 		return dinero;
 	}
 
-	public void setnombre(String nombre) {
+	public void setnombre(LinkedList<String> nombre) {
 		this.nombre = nombre;
 	}
 
- 	public void setdinero(String dinero) {
+ 	public void setdinero(LinkedList<String> dinero) {
 		this.dinero = dinero;
 	}
 

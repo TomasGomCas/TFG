@@ -3,5 +3,5 @@ Crear metodo writeFileClass - OK
 Crear metodo writeBodyClass - OK 
 ---------- COMMIT ----------
 Crear arrays en metodos POST - OK
-Crear funcionamiento en metodos POST -
 Crear base datos -
+Crear funcionamiento en metodos POST - 

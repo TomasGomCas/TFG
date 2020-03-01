@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
 import modelo.Application;
 import modelo.Data;
 import modelo.DataInput;
@@ -51,6 +54,7 @@ public class WritterSpring implements Writter {
 		createControllerFile();
 		writeFile(writeController());
 		writeFileClass();
+		writeCVSClass();
 	}
 
 	/**
@@ -188,6 +192,25 @@ public class WritterSpring implements Writter {
 			}
 		}
 	}
+	
+	private void writeCVSClass() {
+
+		for (Service service : Application.getInstance().getProgramRest().getServices()) {
+			
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter("target\\generatedCode\\gs-rest-service-complete\\target\\" + service.getName() + "CVS.csv"));
+				
+				CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
+		                .withHeader("ID", "Name", "Designation", "Company"));
+
+				csvPrinter.flush();  
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * Write service.
@@ -202,7 +225,9 @@ public class WritterSpring implements Writter {
 
 		str += "\n\t{" + "\n\t";
 
-		str += "return " + writeServiceBody(service) + ";";
+		str += writeServiceBody(service);
+		
+		str += "\n\nreturn null" +  ";";
 
 		str += "\n\t}\n";
 
@@ -250,7 +275,7 @@ public class WritterSpring implements Writter {
 
 		}
 
-		string += ")";
+		string += ") throws IOException";
 		return string;
 	}
 
@@ -264,6 +289,11 @@ public class WritterSpring implements Writter {
 		String string = "package lanzador;\r\n" + "import org.springframework.web.bind.annotation.RequestMapping;\r\n"
 				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
 				+ "import org.springframework.web.bind.annotation.RequestParam;\r\n"
+				+"import java.io.FileWriter;\r\n" + 
+				"import org.apache.commons.csv.CSVFormat;\r\n" + 
+				"import org.apache.commons.csv.CSVPrinter;\n\n"+
+				"\nimport java.util.LinkedList;\n" +
+				"\nimport java.io.IOException;\n"
 				+ "import org.springframework.web.bind.annotation.RestController;\r\n" + "\r\n" + "@RestController\r\n"
 				+ "public class Controller {\n";
 
@@ -285,19 +315,30 @@ public class WritterSpring implements Writter {
 	 */
 	private String writeServiceBody(Service service) {
 
-		String string = service.getDataOutput().getValue();
-
-		List<String> allMatches = new ArrayList<String>();
-		Matcher m = Pattern.compile("[A-Z][0-9]*").matcher(service.getDataOutput().getValue());
-
-		while (m.find()) {
-			allMatches.add(m.group());
-		}
-
-		for (String st : allMatches) {
-			string = string.replaceAll(st, service.getDataInputByAddress(st).getName());
-		}
-
+		String string = "		FileWriter fw = new FileWriter(\"target\\\\sample.csv\", true);	\r\n" + 
+				"		CSVPrinter csvPrinter = new CSVPrinter(fw, CSVFormat.DEFAULT);\r\n" + 
+				"		\r\n" + 
+				"		csvPrinter.printRecord(";
+				for(DataInput dataInput : service.getBody().getDataInputs()) {
+					string += "json.get" + dataInput.getName() + "(),";
+				}
+				string +=  ");\r\n" + 
+				"		\r\n" + 
+				"		fw.close();	";
+		
+//		String string = service.getDataOutput().getValue();
+//
+//		List<String> allMatches = new ArrayList<String>();
+//		Matcher m = Pattern.compile("[A-Z][0-9]*").matcher(service.getDataOutput().getValue());
+//
+//		while (m.find()) {
+//			allMatches.add(m.group());
+//		}
+//
+//		for (String st : allMatches) {
+//			string = string.replaceAll(st, service.getDataInputByAddress(st).getName());
+//		}
+//
 		return string;
 	}
 

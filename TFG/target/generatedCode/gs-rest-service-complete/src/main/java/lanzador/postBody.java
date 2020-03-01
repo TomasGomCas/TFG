@@ -3,23 +3,23 @@ package lanzador;
  import java.util.LinkedList;
 public class PostBody {
 
-private LinkedList<String> nombre;
+private String nombre;
 
-private LinkedList<String> dinero;
+private String dinero;
 
-	public LinkedList<String> getnombre() {
+	public String getnombre() {
 		return nombre;
 	}
 
-	public LinkedList<String> getdinero() {
+	public String getdinero() {
 		return dinero;
 	}
 
-	public void setnombre(LinkedList<String> nombre) {
+	public void setnombre(String nombre) {
 		this.nombre = nombre;
 	}
 
- 	public void setdinero(LinkedList<String> dinero) {
+ 	public void setdinero(String dinero) {
 		this.dinero = dinero;
 	}
 

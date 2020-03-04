@@ -1,14 +1,10 @@
 package modelo.generador;
 
-/**
- * The Interface Reader.
- */
+import java.io.IOException;
+
 public interface Reader {
-	
+
 	// METHODS
-	/**
-	 * Read.
-	 */
-	public void read();
+	public void read() throws IOException;
 
 }

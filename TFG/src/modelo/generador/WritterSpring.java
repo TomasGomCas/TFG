@@ -7,46 +7,23 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 
 import modelo.Application;
 import modelo.Data;
-import modelo.DataInput;
-import modelo.DataOutput;
 import modelo.ProgramRest;
 import modelo.Service;
-import modelo.ServiceType;
 
-/**
- * The Class WritterSpring.
- */
 public class WritterSpring implements Writter {
 
 	// ATRIBUTES
-	/** The aux. */
 	private int aux = 0;
-
-	/** The fo. (File Origin), represents the rute of the origin */
 	private File FO = new File("target\\baseCode\\gs-rest-service-complete");
-
-	/** The fd. (File Destin), represents the rute of the destiny */
 	private File FD = new File("target\\generatedCode");
 
-	/** The fichero. */
 	private File fichero = new File(
 			"target\\generatedCode\\gs-rest-service-complete\\src\\main\\java\\lanzador\\Controller.java");
 
 	// METHODS
-	/**
-	 * Write.
-	 */
 	@Override
 	public void write() {
 		aux = 0;
@@ -54,15 +31,8 @@ public class WritterSpring implements Writter {
 		createControllerFile();
 		writeFile(writeController());
 		writeFileClass();
-		writeCVSClass();
 	}
 
-	/**
-	 * Copy.
-	 *
-	 * @param FO the fo
-	 * @param FD the fd
-	 */
 	private void copy(File FO, File FD) {
 		// si el origen no es una carpeta
 		if (!FO.isDirectory()) {
@@ -109,12 +79,6 @@ public class WritterSpring implements Writter {
 
 	}
 
-	/**
-	 * Copy file.
-	 *
-	 * @param FO the fo
-	 * @param FD the fd
-	 */
 	private void copyFile(File FO, File FD) {
 		try {
 			if (FO.exists()) {
@@ -143,9 +107,6 @@ public class WritterSpring implements Writter {
 		}
 	}
 
-	/**
-	 * Creates the controller file.
-	 */
 	private void createControllerFile() {
 
 		try {
@@ -156,11 +117,6 @@ public class WritterSpring implements Writter {
 
 	}
 
-	/**
-	 * Write file.
-	 *
-	 * @param string the string
-	 */
 	private void writeFile(String string) {
 
 		BufferedWriter writer;
@@ -178,122 +134,26 @@ public class WritterSpring implements Writter {
 	private void writeFileClass() {
 
 		for (Service service : Application.getInstance().getProgramRest().getServices()) {
-			if (service.getTipoServicio() == ServiceType.POST) {
-				BufferedWriter writer;
-				try {
-					writer = new BufferedWriter(new FileWriter(
-							"target\\generatedCode\\gs-rest-service-complete\\src\\main\\java\\lanzador\\"
-									+ service.getName() + "Body.java"));
-					writer.write(writeBodyClass(service));
-					writer.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	private void writeCVSClass() {
 
-		for (Service service : Application.getInstance().getProgramRest().getServices()) {
-			
+			BufferedWriter writer;
 			try {
-				BufferedWriter writer = new BufferedWriter(new FileWriter("target\\generatedCode\\gs-rest-service-complete\\target\\" + service.getName() + "CVS.csv"));
-				
-				CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
-		                .withHeader("ID", "Name", "Designation", "Company"));
-
-				csvPrinter.flush();  
-
+				writer = new BufferedWriter(
+						new FileWriter("target\\generatedCode\\gs-rest-service-complete\\src\\main\\java\\lanzador\\"
+								+ service.getName() + "Body.java"));
+				writer.write(writeBodyClass(service));
+				writer.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 		}
 	}
 
-	/**
-	 * Write service.
-	 *
-	 * @param service the service
-	 * @return the string
-	 */
-	private String writeService(Service service) {
-
-		String str = "";
-		str += writeServiceHeader(service.getName(), service.getData(), service);
-
-		str += "\n\t{" + "\n\t";
-
-		str += writeServiceBody(service);
-		
-		str += "\n\nreturn null" +  ";";
-
-		str += "\n\t}\n";
-
-		return str;
-	}
-
-	/**
-	 * Write service header.
-	 *
-	 * @param mapping the mapping
-	 * @param data    the data
-	 * @return the string
-	 */
-	private String writeServiceHeader(String mapping, LinkedList<Data> data, Service service) {
-
-		// ESCRIBIMOS LA CABECERA
-		String string = "\n\t@RequestMapping(\"/" + mapping + "\")";
-		Data dataAux = null;
-		for (Data i : data) {
-			if (i instanceof DataOutput)
-				dataAux = i;
-		}
-		string += "\n\tpublic " + "Integer" + " " + mapping + "(";
-
-		// ESCRIBIMOS LOS PARAMETROS
-		int j = 0;
-		for (Data i : data) {
-			if (i instanceof DataInput) {
-				dataAux = i;
-				string = string + "@RequestParam(value=\"" + dataAux.getName() + "\") "
-						+ dataAux.getDataType().toString() + " " + dataAux.getName() + "";
-			}
-
-			if (j < data.size() - 2)
-				string = string + ",";
-			j++;
-		}
-
-		if (service.getTipoServicio() == ServiceType.POST) {
-			string += ",@RequestBody " + service.getName() + "Body json";
-//			PONER EN LA FUNCIONALIDAD LA TRANSFORMACION A JSONOBJECT
-//			JsonReader jsonReader = Json.createReader(new StringReader(json));
-//			JsonObject object = jsonReader.readObject();
-//			jsonReader.close();
-
-		}
-
-		string += ") throws IOException";
-		return string;
-	}
-
-	/**
-	 * Write controller.
-	 *
-	 * @return the string
-	 */
 	private String writeController() {
 
 		String string = "package lanzador;\r\n" + "import org.springframework.web.bind.annotation.RequestMapping;\r\n"
 				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
 				+ "import org.springframework.web.bind.annotation.RequestParam;\r\n"
-				+"import java.io.FileWriter;\r\n" + 
-				"import org.apache.commons.csv.CSVFormat;\r\n" + 
-				"import org.apache.commons.csv.CSVPrinter;\n\n"+
-				"\nimport java.util.LinkedList;\n" +
-				"\nimport java.io.IOException;\n"
 				+ "import org.springframework.web.bind.annotation.RestController;\r\n" + "\r\n" + "@RestController\r\n"
 				+ "public class Controller {\n";
 
@@ -307,64 +167,50 @@ public class WritterSpring implements Writter {
 		return string;
 	}
 
-	/**
-	 * Write service body.
-	 *
-	 * @param service the service
-	 * @return the string
-	 */
-	private String writeServiceBody(Service service) {
+	private String writeService(Service service) {
 
-		String string = "		FileWriter fw = new FileWriter(\"target\\\\sample.csv\", true);	\r\n" + 
-				"		CSVPrinter csvPrinter = new CSVPrinter(fw, CSVFormat.DEFAULT);\r\n" + 
-				"		\r\n" + 
-				"		csvPrinter.printRecord(";
-				for(DataInput dataInput : service.getBody().getDataInputs()) {
-					string += "json.get" + dataInput.getName() + "(),";
-				}
-				string +=  ");\r\n" + 
-				"		\r\n" + 
-				"		fw.close();	";
-		
-//		String string = service.getDataOutput().getValue();
-//
-//		List<String> allMatches = new ArrayList<String>();
-//		Matcher m = Pattern.compile("[A-Z][0-9]*").matcher(service.getDataOutput().getValue());
-//
-//		while (m.find()) {
-//			allMatches.add(m.group());
-//		}
-//
-//		for (String st : allMatches) {
-//			string = string.replaceAll(st, service.getDataInputByAddress(st).getName());
-//		}
-//
-		return string;
+		String str = "";
+		str += writeGetAll(service);
+		str += writePost(service);
+
+		return str;
+	}
+
+	private String writeGetAll(Service service) {
+
+		String str = "\n\n	@RequestMapping(\"/" + service.getName() + "getAll\")\n" + "	public String "
+				+ service.getName() + "getAll () {\n" + "		return null;\n" + "	}\n\n";
+
+		return str;
+	}
+
+	private String writePost(Service service) {
+
+		String str = "\n\n	@RequestMapping(\"/" + service.getName() + "Post\")\n" + "	public String "
+				+ service.getName() + "Post (@RequestBody " + service.getName() + "Body body) {\n" + "\n"
+				+ "		return null;\n\n" + "	}\n\n";
+
+		return str;
 	}
 
 	private String writeBodyClass(Service service) {
 
-		String retorno = "package lanzador; \n\n import java.util.LinkedList;" + "\npublic class " + service.getName() + "Body {\n\n";
+		String retorno = "package lanzador;" + "\npublic class " + service.getName() + "Body {\n\n";
 
 		// Se escriben los parametros
-		for (DataInput data : service.getBody().getDataInputs()) {
-			if(data.isArray() == false) retorno += "private String " + data.getName() + ";\n\n";
-			else retorno += "private LinkedList<String> " + data.getName() + ";\n\n";
+		for (Data data : service.getData()) {
+			retorno += "private String " + data.getName() + ";\n\n";
 		}
 
 		// Se escriben los getters
-		for (DataInput data : service.getBody().getDataInputs()) {
-			if(data.isArray() == false) retorno += "	public String get" + data.getName() + "() {\n" + "		return " + data.getName() + ";\n"
-					+ "	}\n\n" + "";
-			else retorno += "	public LinkedList<String> get" + data.getName() + "() {\n" + "		return " + data.getName() + ";\n"
+		for (Data data : service.getData()) {
+			retorno += "	public String get" + data.getName() + "() {\n" + "		return " + data.getName() + ";\n"
 					+ "	}\n\n" + "";
 		}
 
-		// Se escriben los setters TODO
-		for (DataInput data : service.getBody().getDataInputs()) {
-			if(data.isArray() == false) retorno += "	public void set" + data.getName() + "(String " + data.getName() + ") {\n" + "		this."
-					+ data.getName() + " = " + data.getName() + ";\n" + "	}\n\n ";
-			else retorno += "	public void set" + data.getName() + "(LinkedList<String> " + data.getName() + ") {\n" + "		this."
+		// Se escriben los setters
+		for (Data data : service.getData()) {
+			retorno += "	public void set" + data.getName() + "(String " + data.getName() + ") {\n" + "		this."
 					+ data.getName() + " = " + data.getName() + ";\n" + "	}\n\n ";
 		}
 

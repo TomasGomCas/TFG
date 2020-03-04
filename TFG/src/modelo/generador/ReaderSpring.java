@@ -2,251 +2,63 @@ package modelo.generador;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import modelo.Application;
 import modelo.Data;
-import modelo.DataInput;
-import modelo.DataOutput;
-import modelo.DataType;
-import modelo.Operation;
-import modelo.OperationType;
 import modelo.ProgramRest;
 import modelo.Service;
-import modelo.ServiceType;
 
-/**
- * The Class ReaderSpring.
- */
 public class ReaderSpring implements Reader {
 
 	// ATRIBUTES
-	/** The file. */
 	private File file = new File("target\\excel\\excel.xlsx");
 
 	// CONSTRUCTORS
 
 	// METHODS
-	/**
-	 * Read.
-	 */
-	@Override
-	public void read() {
-
-		init();
-
-		FileInputStream excelFile = null;
-		try {
-			excelFile = new FileInputStream(file);
-			Workbook workbook = new XSSFWorkbook(excelFile);
-
-			for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-
-				Sheet datatypeSheet = workbook.getSheetAt(i);
-				ProgramRest rest = Application.getInstance().getProgramRest();
-				rest.getServices().add(readService(datatypeSheet));
-
-			}
-
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	/**
-	 * Inits the.
-	 */
 	private void init() {
 		Application.getInstance().setProgramRest(new ProgramRest());
 	}
 
-	/**
-	 * Read service.
-	 *
-	 * @param sheet the sheet
-	 * @return the service
-	 */
-	private Service readService(Sheet sheet) {
+	@Override
+	public void read() throws IOException {
 
-		Service service = new Service();
+		init();
+		readSheet();
 
-		if (sheet.getRow(0).getCell(1).toString().equalsIgnoreCase("post")) {
-			service.setTipoServicio(ServiceType.POST);
-		} else {
-			service.setTipoServicio(ServiceType.GET);
-		}
-
-		service.setName(sheet.getSheetName());
-
-		for (Data data : readInputData(sheet)) {
-			service.getData().add(data);
-		}
-
-		for (Data data : readOutputData(sheet, service.getDataInputs())) {
-			service.getData().add(data);
-		}
-
-		for (DataInput data : readBodyData(sheet)) {
-			service.getBody().getDataInputs().add(data);
-		}
-
-		return service;
 	}
 
-	/**
-	 * Read input data.
-	 *
-	 * @param sheet the sheet
-	 * @return the linked list
-	 */
-	private LinkedList<Data> readInputData(Sheet sheet) {
+	private void readSheet() throws IOException {
 
-		LinkedList<Data> inputData = new LinkedList<Data>();
-		Iterator<Row> iterator = sheet.iterator();
+		FileInputStream excelFile = new FileInputStream(file);
+		Workbook workbook = new XSSFWorkbook(excelFile);
 
-		while (iterator.hasNext()) {
+		for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+			Sheet sheet = workbook.getSheetAt(i);
+			Service service = new Service();
+			service.setName(sheet.getSheetName());
 
-			Row currentRow = iterator.next();
-			Iterator<Cell> cellIterator = currentRow.iterator();
-			if (cellIterator.hasNext()) {
-				cellIterator.next();
-			}
+			readTableHeaders(service, sheet);
 
-			// If data, enter
-			if (cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("Entrada")) {
-				// Create the data
-				DataInput data = new DataInput();
-				// Read the name of the data
-				Cell currentCell = cellIterator.next();
-				data.setName(currentCell.getStringCellValue());
-				// Read the type of the data
-				currentCell = cellIterator.next();
-				if (currentCell.getCellTypeEnum() == CellType.STRING) {
-					data.setDataType(DataType.String);
-					data.setValue(currentCell.getStringCellValue());
-					data.setAddress(currentCell.getAddress().toString());
-				} else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
-					data.setDataType(DataType.Integer);
-					int aux = (int) currentCell.getNumericCellValue();
-					data.setValue("" + aux);
-					data.setAddress(currentCell.getAddress().toString());
-				}
-				// Add the data into the data array
-				inputData.add(data);
-			}
+			Application.getInstance().getProgramRest().getServices().add(service);
 		}
-		return inputData;
+
 	}
 
-	/**
-	 * Read output data.
-	 *
-	 * @param sheet      the sheet
-	 * @param dataInputs the data inputs
-	 * @return the linked list
-	 */
-	private LinkedList<Data> readOutputData(Sheet sheet, LinkedList<DataInput> dataInputs) {
+	private void readTableHeaders(Service service, Sheet sheet) throws IOException {
 
-		LinkedList<Data> inputData = new LinkedList<Data>();
-		Iterator<Row> iterator = sheet.iterator();
-
-		while (iterator.hasNext()) {
-
-			Row currentRow = iterator.next();
-			Iterator<Cell> cellIterator = currentRow.iterator();
-			if (cellIterator.hasNext()) {
-				cellIterator.next();
-			}
-
-			// If data, enter
-			if (cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("salida")) {
-				// Create the data
-				DataOutput data = new DataOutput();
-				Operation operation = new Operation();
-				// Read the name of the data
-				Cell currentCell = cellIterator.next();
-				data.setName(currentCell.getStringCellValue());
-				// Read the type of the data
-				currentCell = cellIterator.next();
-				if (currentCell.getCellTypeEnum() == CellType.STRING) {
-					data.setDataType(DataType.String);
-					data.setValue(currentCell.getStringCellValue());
-					data.setAddress(currentCell.getAddress().toString());
-				} else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
-					data.setDataType(DataType.Integer);
-					int aux = (int) currentCell.getNumericCellValue();
-					data.setValue("" + aux);
-					data.setAddress(currentCell.getAddress().toString());
-				} else if (currentCell.getCellTypeEnum() == CellType.FORMULA) {
-					data.setDataType(DataType.dataFormula);
-					data.setValue(currentCell.getCellFormula());
-					data.setAddress(currentCell.getAddress().toString());
-					operation.setOperationType(OperationType.math);
-				}
-
-				operation.setDataInput(dataInputs);
-				data.setOperation(operation);
-				// Add the data into the data array
-				inputData.add(data);
-			}
+		for (Cell mycell : sheet.getRow(0)) {
+			Data dataInput = new Data();
+			System.out.println(mycell.toString());
+			dataInput.setName(mycell.toString());
+			service.getData().add(dataInput);
 		}
-		return inputData;
-	}
-
-	private LinkedList<DataInput> readBodyData(Sheet sheet) {
-
-		LinkedList<DataInput> inputData = new LinkedList<DataInput>();
-		Iterator<Row> iterator = sheet.iterator();
-
-		while (iterator.hasNext()) {
-
-			Row currentRow = iterator.next();
-			Iterator<Cell> cellIterator = currentRow.iterator();
-			if (cellIterator.hasNext()) {
-				cellIterator.next();
-			}
-
-			// If data, enter
-			if (cellIterator.hasNext() && currentRow.getCell(0).toString().equalsIgnoreCase("body")) {
-				// Create the data
-				DataInput data = new DataInput();
-				// Read the name of the data
-				Cell currentCell = cellIterator.next();
-				data.setName(currentCell.getStringCellValue());
-				// Read the type of the data
-				currentCell = cellIterator.next();
-				if (currentCell.getCellTypeEnum() == CellType.STRING) {
-					data.setDataType(DataType.String);
-					data.setValue(currentCell.getStringCellValue());
-					data.setAddress(currentCell.getAddress().toString());
-					if(cellIterator.hasNext()) data.setArray(true);
-				} else if (currentCell.getCellTypeEnum() == CellType.NUMERIC) {
-					data.setDataType(DataType.Integer);
-					int aux = (int) currentCell.getNumericCellValue();
-					data.setValue("" + aux);
-					data.setAddress(currentCell.getAddress().toString());
-					if(cellIterator.hasNext()) data.setArray(true);
-				}
-				// Add the data into the data array
-				inputData.add(data);
-			}
-		}
-		return inputData;
 
 	}
 

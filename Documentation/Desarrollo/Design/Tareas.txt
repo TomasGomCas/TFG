@@ -1,7 +1,11 @@
+--------- COMMIT V1 -------
 Crear metodo en ReaderSpring - readBodyData(sheet) - OK (26/02/2020)
 Crear metodo writeFileClass - OK 
 Crear metodo writeBodyClass - OK 
----------- COMMIT ----------
-Crear arrays en metodos POST - OK
-Crear base datos -
-Crear funcionamiento en metodos POST - 
+---------- COMMIT V1 ----------
+Crear arrays en metodos POST
+Crear funcionamiento en metodos POST
+Crear base datos
+--------- COMMIT V2 --------
+Cambio de diseño astah para version 2
+Meter base de datos

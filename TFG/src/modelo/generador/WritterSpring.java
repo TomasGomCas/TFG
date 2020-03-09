@@ -7,6 +7,10 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 
 import modelo.Application;
 import modelo.Data;
@@ -31,6 +35,7 @@ public class WritterSpring implements Writter {
 		createControllerFile();
 		writeFile(writeController());
 		writeFileClass();
+		writeFileDBClass();
 	}
 
 	private void copy(File FO, File FD) {
@@ -147,6 +152,33 @@ public class WritterSpring implements Writter {
 			}
 
 		}
+	}
+
+	private void writeFileDBClass() {
+
+		for (Service service : Application.getInstance().getProgramRest().getServices()) {
+
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter(
+						"target\\generatedCode\\gs-rest-service-complete\\target\\" + service.getName() + "DB.csv"));
+
+				ArrayList<String> ar = new ArrayList<String>();
+				for (Data data : service.getData()) {
+					ar.add(data.getName());
+				}
+
+				String[] HEADERS = ar.toArray(new String[0]);
+				CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(HEADERS));
+
+				csvPrinter.flush();
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
 	}
 
 	private String writeController() {

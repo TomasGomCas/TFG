@@ -1,11 +1,15 @@
---------- COMMIT V1 -------
+--------- COMMIT V1 ------- NP
 Crear metodo en ReaderSpring - readBodyData(sheet) - OK (26/02/2020)
 Crear metodo writeFileClass - OK 
 Crear metodo writeBodyClass - OK 
----------- COMMIT V1 ----------
+
+
+---------- COMMIT V1 ---------- NP
 Crear arrays en metodos POST
 Crear funcionamiento en metodos POST
 Crear base datos
+
+
 --------- COMMIT V2 --------
-Cambio de diseño astah para version 2
 Meter base de datos
+Cambio de diseño astah para version 2

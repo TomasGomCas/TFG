@@ -169,7 +169,6 @@ public class WritterSpring implements Writter {
 
 				String[] HEADERS = ar.toArray(new String[0]);
 				CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(HEADERS));
-
 				csvPrinter.flush();
 
 			} catch (IOException e) {
@@ -186,8 +185,13 @@ public class WritterSpring implements Writter {
 		String string = "package lanzador;\r\n" + "import org.springframework.web.bind.annotation.RequestMapping;\r\n"
 				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
 				+ "import org.springframework.web.bind.annotation.RequestParam;\r\n"
-				+ "import org.springframework.web.bind.annotation.RestController;\r\n" + "\r\n" + "@RestController\r\n"
-				+ "public class Controller {\n";
+				+ "import org.springframework.web.bind.annotation.RestController;\r\n" + "import java.io.IOException;\n"
+				+ "import java.io.Reader;\n" + "import java.nio.file.Files;\n" + "import java.nio.file.Paths;\n" + "\n"
+				+ "import org.apache.commons.csv.CSVFormat;\n" + "import org.apache.commons.csv.CSVRecord;\n"
+				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
+				+ "import org.springframework.web.bind.annotation.RequestMapping;\n"
+				+ "import org.springframework.web.bind.annotation.RestController; \nimport java.util.LinkedList;\n"
+				+ "\r\n" + "@RestController\r\n" + "public class Controller {\n";
 
 		ProgramRest rest = Application.getInstance().getProgramRest();
 
@@ -210,8 +214,27 @@ public class WritterSpring implements Writter {
 
 	private String writeGetAll(Service service) {
 
-		String str = "\n\n	@RequestMapping(\"/" + service.getName() + "getAll\")\n" + "	public String "
-				+ service.getName() + "getAll () {\n" + "		return null;\n" + "	}\n\n";
+		String str = "\n\n	@RequestMapping(\"/" + service.getName() + "getAll\")\n" + "	public LinkedList<"
+				+ service.getName() + "Body> " + service.getName() + "getAll () {\n" + "" + "				LinkedList<"
+				+ service.getName() + "Body> lista = new LinkedList<" + service.getName() + "Body>();\n" + "\n"
+				+ "		try {\n" + "\n" + "			Reader reader = Files.newBufferedReader(Paths.get(\"target\\\\"
+				+ service.getName() + "DB.csv\"));\n" + "\n"
+				+ "			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);\n"
+				+ "			int aux = 0;\n" + "			for (CSVRecord record : records) {\n" + "\n"
+				+ "				if (aux != 0) {\n" + "					" + service.getName() + "Body valor = new "
+				+ service.getName() + "Body();\n";
+
+		int aux = 0;
+		for (Data data : service.getData()) {
+			str += "					valor.set" + data.getName() + "(record.get(" + aux + "));\n";
+			aux++;
+		}
+
+		str += "					lista.add(valor);\n" + "				}\n" + "				aux++;\n"
+				+ "			}\n" + "\n" + "			reader.close();\n" + "\n" + "		} catch (IOException ex) {\n"
+				+ "			ex.printStackTrace();\n" + "		}\n" + "\n" + "		return lista;"
+
+				+ "\n" + "	}\n\n";
 
 		return str;
 	}
@@ -250,4 +273,5 @@ public class WritterSpring implements Writter {
 
 		return retorno;
 	}
+
 }

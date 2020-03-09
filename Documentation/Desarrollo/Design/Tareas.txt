@@ -13,3 +13,4 @@ Crear base datos
 --------- COMMIT V2 --------
 Meter base de datos
 Cambio de diseño astah para version 2
+Estudiar formular

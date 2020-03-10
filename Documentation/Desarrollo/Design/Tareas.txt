@@ -11,6 +11,7 @@ Crear base datos
 
 
 --------- COMMIT V2 --------
-Meter base de datos
+Meter base de datos OK (getALL,postGuardarUno) OK
 Cambio de diseño astah para version 2
-Estudiar formular
+Dejar codigo generado bien formateado
+Estudiar formulas

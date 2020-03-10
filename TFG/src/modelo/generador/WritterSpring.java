@@ -184,11 +184,12 @@ public class WritterSpring implements Writter {
 
 		String string = "package lanzador;\r\n" + "import org.springframework.web.bind.annotation.RequestMapping;\r\n"
 				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
-				+ "import org.springframework.web.bind.annotation.RequestParam;\r\n"
-				+ "import org.springframework.web.bind.annotation.RestController;\r\n" + "import java.io.IOException;\n"
-				+ "import java.io.Reader;\n" + "import java.nio.file.Files;\n" + "import java.nio.file.Paths;\n" + "\n"
-				+ "import org.apache.commons.csv.CSVFormat;\n" + "import org.apache.commons.csv.CSVRecord;\n"
-				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
+				+ "import org.springframework.web.bind.annotation.RequestParam;\r\n import java.io.BufferedWriter;\n"
+				+ "import java.io.FileWriter;\n" + "import org.springframework.web.bind.annotation.RestController;\r\n"
+				+ "import java.io.IOException;\n" + "import java.io.Reader;\n" + "import java.nio.file.Files;\n"
+				+ "import java.nio.file.Paths;\n" + "\n" + "import org.apache.commons.csv.CSVFormat;\n"
+				+ "import org.apache.commons.csv.CSVRecord;\n"
+				+ "import org.springframework.web.bind.annotation.RequestBody;\nimport org.apache.commons.csv.CSVPrinter;\n"
 				+ "import org.springframework.web.bind.annotation.RequestMapping;\n"
 				+ "import org.springframework.web.bind.annotation.RestController; \nimport java.util.LinkedList;\n"
 				+ "\r\n" + "@RestController\r\n" + "public class Controller {\n";
@@ -222,7 +223,13 @@ public class WritterSpring implements Writter {
 				+ "			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);\n"
 				+ "			int aux = 0;\n" + "			for (CSVRecord record : records) {\n" + "\n"
 				+ "				if (aux != 0) {\n" + "					" + service.getName() + "Body valor = new "
-				+ service.getName() + "Body();\n";
+				+ service.getName() + "Body(";
+
+		for (Data data : service.getData()) {
+			str += "\"\",";
+		}
+
+		str += ");\n";
 
 		int aux = 0;
 		for (Data data : service.getData()) {
@@ -243,7 +250,21 @@ public class WritterSpring implements Writter {
 
 		String str = "\n\n	@RequestMapping(\"/" + service.getName() + "Post\")\n" + "	public String "
 				+ service.getName() + "Post (@RequestBody " + service.getName() + "Body body) {\n" + "\n"
-				+ "		return null;\n\n" + "	}\n\n";
+
+				+ "		try {\n" + "			BufferedWriter writer = new BufferedWriter(new FileWriter(\"target\\\\"
+				+ service.getName() + "DB.csv\", true));\n" + "\n"
+				+ "			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);\n"
+				+ "			csvPrinter.printRecord(";
+
+		for (Data data : service.getData()) {
+			str += " body.get" + data.getName() + "(),";
+		}
+
+		str += ");\n" + "\n" + "			csvPrinter.flush();\n" + "			return \"true\";\n"
+				+ "		} catch (IOException e) {\n" + "			// TODO Auto-generated catch block\n"
+				+ "			e.printStackTrace();\n" + "		}\n" + "\n" + "		return \"false\";"
+
+				+ "}\n\n";
 
 		return str;
 	}
@@ -256,6 +277,18 @@ public class WritterSpring implements Writter {
 		for (Data data : service.getData()) {
 			retorno += "private String " + data.getName() + ";\n\n";
 		}
+
+		// Se escribe el constructor
+		retorno += "	public " + service.getName() + "Body (";
+		for (Data data : service.getData()) {
+			retorno += "String " + data.getName() + ",";
+		}
+
+		retorno += ") {";
+		for (Data data : service.getData()) {
+			retorno += "\nthis. " + data.getName() + " = " + data.getName() + ";";
+		}
+		retorno += "}\n\n";
 
 		// Se escriben los getters
 		for (Data data : service.getData()) {

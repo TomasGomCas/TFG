@@ -225,8 +225,13 @@ public class WritterSpring implements Writter {
 				+ "				if (aux != 0) {\n" + "					" + service.getName() + "Body valor = new "
 				+ service.getName() + "Body(";
 
+		int i = 0;
 		for (Data data : service.getData()) {
-			str += "\"\",";
+			if (i < service.getData().size() - 1)
+				str += "\"\",";
+			else
+				str += "\"\"";
+			i++;
 		}
 
 		str += ");\n";
@@ -256,8 +261,14 @@ public class WritterSpring implements Writter {
 				+ "			CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT);\n"
 				+ "			csvPrinter.printRecord(";
 
+		int i = 0;
 		for (Data data : service.getData()) {
-			str += " body.get" + data.getName() + "(),";
+			if (i < service.getData().size() - 1)
+				str += " body.get" + data.getName() + "(),";
+			else
+				str += " body.get" + data.getName() + "()";
+
+			i++;
 		}
 
 		str += ");\n" + "\n" + "			csvPrinter.flush();\n" + "			return \"true\";\n"
@@ -280,8 +291,13 @@ public class WritterSpring implements Writter {
 
 		// Se escribe el constructor
 		retorno += "	public " + service.getName() + "Body (";
+		int aux = 0;
 		for (Data data : service.getData()) {
-			retorno += "String " + data.getName() + ",";
+			if (aux < service.getData().size() - 1)
+				retorno += "String " + data.getName() + ",";
+			else
+				retorno += "String " + data.getName() + "";
+			aux++;
 		}
 
 		retorno += ") {";

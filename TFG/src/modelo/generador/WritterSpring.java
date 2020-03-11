@@ -191,7 +191,7 @@ public class WritterSpring implements Writter {
 				+ "import org.springframework.web.bind.annotation.RequestBody;\nimport org.apache.commons.csv.CSVPrinter;\n"
 				+ "import org.springframework.web.bind.annotation.RequestMapping;\n"
 				+ "import org.springframework.web.bind.annotation.RestController; \nimport java.util.LinkedList;\n"
-				+ "\r\n" + "@RestController\r\n" + "public class Controller {\n";
+				+ "\r\n" + "@RestController\r\n" + "public class Controller {\n\n";
 
 		ProgramRest rest = Application.getInstance().getProgramRest();
 
@@ -214,8 +214,8 @@ public class WritterSpring implements Writter {
 
 	private String writeGetAll(Service service) {
 
-		String str = "\n\n	@RequestMapping(\"/" + service.getName() + "getAll\")\n" + "	public LinkedList<"
-				+ service.getName() + "Body> " + service.getName() + "getAll () {\n" + "" + "				LinkedList<"
+		String str = "@RequestMapping(\"/" + service.getName() + "getAll\")\n\n" + "	public LinkedList<"
+				+ service.getName() + "Body> " + service.getName() + "getAll () {\n\n" + "" + "\tLinkedList<"
 				+ service.getName() + "Body> lista = new LinkedList<" + service.getName() + "Body>();\n" + "\n"
 				+ "		try {\n" + "\n" + "			Reader reader = Files.newBufferedReader(Paths.get(\"target\\\\"
 				+ service.getName() + "DB.csv\"));\n" + "\n"
@@ -252,8 +252,8 @@ public class WritterSpring implements Writter {
 
 	private String writePost(Service service) {
 
-		String str = "\n\n	@RequestMapping(\"/" + service.getName() + "Post\")\n" + "	public String "
-				+ service.getName() + "Post (@RequestBody " + service.getName() + "Body body) {\n" + "\n"
+		String str = "@RequestMapping(\"/" + service.getName() + "Post\")\n" + "	public String " + service.getName()
+				+ "Post (@RequestBody " + service.getName() + "Body body) {\n" + "\n"
 
 				+ "		try {\n" + "			BufferedWriter writer = new BufferedWriter(new FileWriter(\"target\\\\"
 				+ service.getName() + "DB.csv\", true));\n" + "\n"
@@ -281,15 +281,15 @@ public class WritterSpring implements Writter {
 
 	private String writeBodyClass(Service service) {
 
-		String retorno = "package lanzador;" + "\npublic class " + service.getName() + "Body {\n\n";
+		String retorno = "package lanzador;" + "\n\npublic class " + service.getName() + "Body {\n\n";
 
 		// Se escriben los parametros
 		for (Data data : service.getData()) {
-			retorno += "private String " + data.getName() + ";\n\n";
+			retorno += "\tprivate String " + data.getName() + ";\n";
 		}
 
 		// Se escribe el constructor
-		retorno += "	public " + service.getName() + "Body (";
+		retorno += "\n	public " + service.getName() + "Body (";
 		int aux = 0;
 		for (Data data : service.getData()) {
 			if (aux < service.getData().size() - 1)
@@ -301,9 +301,9 @@ public class WritterSpring implements Writter {
 
 		retorno += ") {";
 		for (Data data : service.getData()) {
-			retorno += "\nthis. " + data.getName() + " = " + data.getName() + ";";
+			retorno += "\n\tthis. " + data.getName() + " = " + data.getName() + ";";
 		}
-		retorno += "}\n\n";
+		retorno += "\n\t}\n\n";
 
 		// Se escriben los getters
 		for (Data data : service.getData()) {

@@ -55,7 +55,6 @@ public class ReaderSpring implements Reader {
 
 		for (Cell mycell : sheet.getRow(0)) {
 			Data dataInput = new Data();
-			System.out.println(mycell.toString());
 			dataInput.setName(mycell.toString());
 			service.getData().add(dataInput);
 		}

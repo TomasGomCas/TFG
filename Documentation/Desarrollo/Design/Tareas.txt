@@ -12,6 +12,9 @@ Crear base datos
 
 --------- COMMIT V2 --------
 Meter base de datos OK (getALL,postGuardarUno) OK
-Cambio de diseño astah para version 2
+Cambio de diseño astah para version 2 OK
 Dejar codigo generado bien formateado
+Crear interfaz UI para cargar las excel
+Crear la documentacion de usuario (manual de usuario, explicacion de version)
+Subir a Rama Desarrollo Version 2
 Estudiar formulas

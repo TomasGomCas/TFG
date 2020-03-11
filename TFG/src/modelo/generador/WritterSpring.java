@@ -23,7 +23,6 @@ public class WritterSpring implements Writter {
 	private int aux = 0;
 	private File FO = new File("target\\baseCode\\gs-rest-service-complete");
 	private File FD = new File("target\\generatedCode");
-
 	private File fichero = new File(
 			"target\\generatedCode\\gs-rest-service-complete\\src\\main\\java\\lanzador\\Controller.java");
 

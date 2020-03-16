@@ -4,6 +4,6 @@ package modelo.generador;
 public interface Writter {
 
 	// METHODS
-	public void write();
+	public void write(String rutaSalida);
 
 }

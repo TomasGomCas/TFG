@@ -28,7 +28,10 @@ public class WritterSpring implements Writter {
 
 	// METHODS
 	@Override
-	public void write() {
+	public void write(String rutaSalida) {
+
+		FD = new File(rutaSalida);
+		fichero = new File(rutaSalida + "\\gs-rest-service-complete\\src\\main\\java\\lanzador\\Controller.java");
 		aux = 0;
 		copy(FO, FD);
 		createControllerFile();
@@ -141,9 +144,8 @@ public class WritterSpring implements Writter {
 
 			BufferedWriter writer;
 			try {
-				writer = new BufferedWriter(
-						new FileWriter("target\\generatedCode\\gs-rest-service-complete\\src\\main\\java\\lanzador\\"
-								+ service.getName() + "Body.java"));
+				writer = new BufferedWriter(new FileWriter(FD.getAbsolutePath()
+						+ "\\gs-rest-service-complete\\src\\main\\java\\lanzador\\" + service.getName() + "Body.java"));
 				writer.write(writeBodyClass(service));
 				writer.close();
 			} catch (IOException e) {
@@ -159,7 +161,7 @@ public class WritterSpring implements Writter {
 
 			try {
 				BufferedWriter writer = new BufferedWriter(new FileWriter(
-						"target\\generatedCode\\gs-rest-service-complete\\target\\" + service.getName() + "DB.csv"));
+						FD.getAbsolutePath() + "\\gs-rest-service-complete\\target\\" + service.getName() + "DB.csv"));
 
 				ArrayList<String> ar = new ArrayList<String>();
 				for (Data data : service.getData()) {

@@ -20,9 +20,9 @@ public class Application {
 	}
 
 	// METHODS
-	public void generateProgramSpring() throws IOException {
-		readerSpring.read();
-		writterSpring.write();
+	public void generateProgramSpring(String rutaEntrada, String rutaSalida) throws IOException {
+		readerSpring.read(rutaEntrada);
+		writterSpring.write(rutaSalida);
 
 	}
 

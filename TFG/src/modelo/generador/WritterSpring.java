@@ -184,7 +184,7 @@ public class WritterSpring implements Writter {
 	private String writeController() {
 
 		String string = "package lanzador;\r\n" + "import org.springframework.web.bind.annotation.RequestMapping;\r\n"
-				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
+				+ "import java.util.UUID;\nimport org.springframework.web.bind.annotation.RequestBody;\n"
 				+ "import org.springframework.web.bind.annotation.RequestParam;\r\n import java.io.BufferedWriter;\n"
 				+ "import java.io.FileWriter;\n" + "import org.springframework.web.bind.annotation.RestController;\r\n"
 				+ "import java.io.IOException;\n" + "import java.io.Reader;\n" + "import java.nio.file.Files;\n"
@@ -267,7 +267,7 @@ public class WritterSpring implements Writter {
 			if (i < service.getData().size() - 1)
 				str += " body.get" + data.getName() + "(),";
 			else
-				str += " body.get" + data.getName() + "()";
+				str += " UUID.randomUUID().toString()";
 
 			i++;
 		}

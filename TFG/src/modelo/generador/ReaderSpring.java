@@ -59,6 +59,9 @@ public class ReaderSpring implements Reader {
 			dataInput.setName(mycell.toString());
 			service.getData().add(dataInput);
 		}
+		Data dataInput = new Data();
+		dataInput.setName("id");
+		service.getData().add(dataInput);
 
 	}
 

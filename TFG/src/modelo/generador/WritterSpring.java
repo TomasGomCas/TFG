@@ -184,7 +184,7 @@ public class WritterSpring implements Writter {
 	private String writeController() {
 
 		String string = "package lanzador;\r\n" + "import org.springframework.web.bind.annotation.RequestMapping;\r\n"
-				+ "import java.util.UUID;\nimport org.springframework.web.bind.annotation.RequestBody;\n"
+				+ "import java.util.UUID;\nimport org.springframework.web.bind.annotation.RequestBody;\nimport org.springframework.web.bind.annotation.RequestMethod; \n"
 				+ "import org.springframework.web.bind.annotation.RequestParam;\r\n import java.io.BufferedWriter;\n"
 				+ "import java.io.FileWriter;\n" + "import org.springframework.web.bind.annotation.RestController;\r\n"
 				+ "import java.io.IOException;\n" + "import java.io.Reader;\n" + "import java.nio.file.Files;\n"
@@ -218,11 +218,12 @@ public class WritterSpring implements Writter {
 
 	private String writeGetAll(Service service) {
 
-		String str = "@RequestMapping(\"/" + service.getName() + "getAll\")\n\n" + "	public LinkedList<"
-				+ service.getName() + "Body> " + service.getName() + "getAll () {\n\n" + "" + "\tLinkedList<"
-				+ service.getName() + "Body> lista = new LinkedList<" + service.getName() + "Body>();\n" + "\n"
-				+ "		try {\n" + "\n" + "			Reader reader = Files.newBufferedReader(Paths.get(\"target\\\\"
-				+ service.getName() + "DB.csv\"));\n" + "\n"
+		String str = "@RequestMapping(value = \"/" + service.getName() + "\", method = RequestMethod.GET)\n\n"
+				+ "	public LinkedList<" + service.getName() + "Body> " + service.getName() + "getAll () {\n\n" + ""
+				+ "\tLinkedList<" + service.getName() + "Body> lista = new LinkedList<" + service.getName()
+				+ "Body>();\n" + "\n" + "		try {\n" + "\n"
+				+ "			Reader reader = Files.newBufferedReader(Paths.get(\"target\\\\" + service.getName()
+				+ "DB.csv\"));\n" + "\n"
 				+ "			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);\n"
 				+ "			int aux = 0;\n" + "			for (CSVRecord record : records) {\n" + "\n"
 				+ "				if (aux != 0) {\n" + "					" + service.getName() + "Body valor = new "
@@ -258,13 +259,14 @@ public class WritterSpring implements Writter {
 
 		String str = "";
 
-		str += "	@RequestMapping(\"/" + service.getName() + "Delete\")\n" + "	public boolean " + service.getName()
-				+ "Delete(@RequestParam(value = \"id\") String id) {\n" + "\n" + "		// leer records\n"
-				+ "		LinkedList<" + service.getName() + "Body> lista = " + service.getName() + "getAll();\n"
-				+ "		LinkedList<" + service.getName() + "Body> listaNueva = new LinkedList<" + service.getName()
-				+ "Body>();\n" + "		for (" + service.getName() + "Body row : lista) {\n"
-				+ "			if (!row.getid().equals(id))\n" + "				listaNueva.add(row);\n" + "		}\n" + "\n"
-				+ "		// Escribir records\n" + "		try {\n" + "			BufferedWriter writer;\n"
+		str += "	@RequestMapping(value = \"/" + service.getName() + "\", method = RequestMethod.DELETE)\n"
+				+ "	public boolean " + service.getName() + "Delete(@RequestParam(value = \"id\") String id) {\n" + "\n"
+				+ "		// leer records\n" + "		LinkedList<" + service.getName() + "Body> lista = "
+				+ service.getName() + "getAll();\n" + "		LinkedList<" + service.getName()
+				+ "Body> listaNueva = new LinkedList<" + service.getName() + "Body>();\n" + "		for ("
+				+ service.getName() + "Body row : lista) {\n" + "			if (!row.getid().equals(id))\n"
+				+ "				listaNueva.add(row);\n" + "		}\n" + "\n" + "		// Escribir records\n"
+				+ "		try {\n" + "			BufferedWriter writer;\n"
 				+ "			writer = new BufferedWriter(new FileWriter(\"target\\\\" + service.getName()
 				+ "DB.csv\"));\n" + "\n" + "			CSVPrinter csvPrinter = new CSVPrinter(writer,\n"
 				+ "					";
@@ -301,8 +303,9 @@ public class WritterSpring implements Writter {
 
 	private String writePost(Service service) {
 
-		String str = "@RequestMapping(\"/" + service.getName() + "Post\")\n" + "	public String " + service.getName()
-				+ "Post (@RequestBody " + service.getName() + "Body body) {\n" + "\n"
+		String str = "@RequestMapping(value = \"/" + service.getName() + "\", method = RequestMethod.POST)\n"
+				+ "	public String " + service.getName() + "Post (@RequestBody " + service.getName() + "Body body) {\n"
+				+ "\n"
 
 				+ "		try {\n" + "			BufferedWriter writer = new BufferedWriter(new FileWriter(\"target\\\\"
 				+ service.getName() + "DB.csv\", true));\n" + "\n"
@@ -332,12 +335,13 @@ public class WritterSpring implements Writter {
 
 		String str = "";
 
-		str += "	\n@RequestMapping(\"/" + service.getName() + "PUT\")\n" + "	public boolean " + service.getName()
-				+ "PUT(@RequestParam(value = \"id\") String id,@RequestBody " + service.getName() + "Body body) {\n"
-				+ "\n" + "		// leer records\n" + "		LinkedList<" + service.getName() + "Body> lista = "
-				+ service.getName() + "getAll();\n" + "		LinkedList<" + service.getName()
-				+ "Body> listaNueva = new LinkedList<" + service.getName() + "Body>();\n" + "		for ("
-				+ service.getName() + "Body row : lista) {\n" + "			if (row.getid().equals(id)){\n"
+		str += "	\n@RequestMapping(value = \"/" + service.getName() + "\", method = RequestMethod.PUT)\n"
+				+ "	public boolean " + service.getName() + "PUT(@RequestParam(value = \"id\") String id,@RequestBody "
+				+ service.getName() + "Body body) {\n" + "\n" + "		// leer records\n" + "		LinkedList<"
+				+ service.getName() + "Body> lista = " + service.getName() + "getAll();\n" + "		LinkedList<"
+				+ service.getName() + "Body> listaNueva = new LinkedList<" + service.getName() + "Body>();\n"
+				+ "		for (" + service.getName() + "Body row : lista) {\n"
+				+ "			if (row.getid().equals(id)){\n"
 				+ "row = body;\nrow.setid(id);				}listaNueva.add(row);\n" + "		}\n" + "\n"
 				+ "		// Escribir records\n" + "		try {\n" + "			BufferedWriter writer;\n"
 				+ "			writer = new BufferedWriter(new FileWriter(\"target\\\\" + service.getName()
@@ -369,7 +373,7 @@ public class WritterSpring implements Writter {
 
 		str += "			csvPrinter.flush();\n" + "\n" + "		} catch (IOException e) {\n"
 				+ "			// TODO Auto-generated catch block\n" + "			e.printStackTrace();\n" + "		}\n"
-				+ "\n" + "		return true;\n" + "	}\n";
+				+ "\n" + "		return true;\n" + "	}\n\n";
 
 		return str;
 	}

@@ -209,6 +209,7 @@ public class WritterSpring implements Writter {
 
 		String str = "";
 		str += writeGetAll(service);
+		str += writeGetById(service);
 		str += writePost(service);
 		str += writeDelete(service);
 		str += writePut(service);
@@ -249,6 +250,46 @@ public class WritterSpring implements Writter {
 		str += "					lista.add(valor);\n" + "				}\n" + "				aux++;\n"
 				+ "			}\n" + "\n" + "			reader.close();\n" + "\n" + "		} catch (IOException ex) {\n"
 				+ "			ex.printStackTrace();\n" + "		}\n" + "\n" + "		return lista;"
+
+				+ "\n" + "	}\n\n";
+
+		return str;
+	}
+
+	private String writeGetById(Service service) {
+
+		String str = "@RequestMapping(value = \"/" + service.getName() + "ID\", method = RequestMethod.GET)\n\n"
+				+ "	public " + service.getName() + "Body " + service.getName()
+				+ "getById (@RequestParam(value = \"id\") String id) {\n\n" + "" + "\tLinkedList<" + service.getName()
+				+ "Body> lista = new LinkedList<" + service.getName() + "Body>();\n" + "\n" + "		try {\n" + "\n"
+				+ "			Reader reader = Files.newBufferedReader(Paths.get(\"target\\\\" + service.getName()
+				+ "DB.csv\"));\n" + "\n"
+				+ "			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(reader);\n"
+				+ "			int aux = 0;\n" + "			for (CSVRecord record : records) {\n" + "\n"
+				+ "				if (aux != 0) {\n" + "					" + service.getName() + "Body valor = new "
+				+ service.getName() + "Body(";
+
+		int i = 0;
+		for (Data data : service.getData()) {
+			if (i < service.getData().size() - 1)
+				str += "\"\",";
+			else
+				str += "\"\"";
+			i++;
+		}
+
+		str += ");\n";
+
+		int aux = 0;
+		for (Data data : service.getData()) {
+			str += "					valor.set" + data.getName() + "(record.get(" + aux + "));\n";
+			aux++;
+		}
+
+		str += "					lista.add(valor);\n"
+				+ "				if (valor.getid().equals(id)) {return valor;}}\n" + "				aux++;\n"
+				+ "			}\n" + "\n" + "			reader.close();\n" + "\n" + "		} catch (IOException ex) {\n"
+				+ "			ex.printStackTrace();\n" + "		}\n" + "\n" + "		return  null;"
 
 				+ "\n" + "	}\n\n";
 

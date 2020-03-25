@@ -211,6 +211,7 @@ public class WritterSpring implements Writter {
 		str += writeGetAll(service);
 		str += writePost(service);
 		str += writeDelete(service);
+		str += writePut(service);
 
 		return str;
 	}
@@ -323,6 +324,52 @@ public class WritterSpring implements Writter {
 				+ "			e.printStackTrace();\n" + "		}\n" + "\n" + "		return \"false\";"
 
 				+ "}\n\n";
+
+		return str;
+	}
+
+	private String writePut(Service service) {
+
+		String str = "";
+
+		str += "	\n@RequestMapping(\"/" + service.getName() + "PUT\")\n" + "	public boolean " + service.getName()
+				+ "PUT(@RequestParam(value = \"id\") String id,@RequestBody " + service.getName() + "Body body) {\n"
+				+ "\n" + "		// leer records\n" + "		LinkedList<" + service.getName() + "Body> lista = "
+				+ service.getName() + "getAll();\n" + "		LinkedList<" + service.getName()
+				+ "Body> listaNueva = new LinkedList<" + service.getName() + "Body>();\n" + "		for ("
+				+ service.getName() + "Body row : lista) {\n" + "			if (row.getid().equals(id)){\n"
+				+ "row = body;\nrow.setid(id);				}listaNueva.add(row);\n" + "		}\n" + "\n"
+				+ "		// Escribir records\n" + "		try {\n" + "			BufferedWriter writer;\n"
+				+ "			writer = new BufferedWriter(new FileWriter(\"target\\\\" + service.getName()
+				+ "DB.csv\"));\n" + "\n" + "			CSVPrinter csvPrinter = new CSVPrinter(writer,\n"
+				+ "					";
+
+		// Escribimos cabeceras
+		str += "CSVFormat.DEFAULT.withHeader(";
+		int aux = 0;
+		for (Data data : service.getData()) {
+			if (aux < service.getData().size() - 1)
+				str += "\"" + data.getName() + "\",";
+			else
+				str += "\"" + data.getName() + "\"));";
+			aux++;
+		}
+
+		// Escribimos Items
+		aux = 0;
+		str += "			for (" + service.getName()
+				+ "Body item : listaNueva) {\n			csvPrinter.printRecord(";
+		for (Data data : service.getData()) {
+			if (aux < service.getData().size() - 1)
+				str += "item.get" + data.getName() + "(),";
+			else
+				str += "item.get" + data.getName() + "());}\n";
+			aux++;
+		}
+
+		str += "			csvPrinter.flush();\n" + "\n" + "		} catch (IOException e) {\n"
+				+ "			// TODO Auto-generated catch block\n" + "			e.printStackTrace();\n" + "		}\n"
+				+ "\n" + "		return true;\n" + "	}\n";
 
 		return str;
 	}

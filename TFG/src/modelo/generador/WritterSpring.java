@@ -183,17 +183,21 @@ public class WritterSpring implements Writter {
 
 	private String writeController() {
 
-		String string = "package lanzador;\r\n" + "import org.springframework.web.bind.annotation.RequestMapping;\r\n"
-				+ "import java.util.UUID;\nimport org.springframework.web.bind.annotation.RequestBody;\nimport org.springframework.web.bind.annotation.RequestMethod; \n"
-				+ "import org.springframework.web.bind.annotation.RequestParam;\r\n import java.io.BufferedWriter;\n"
-				+ "import java.io.FileWriter;\n" + "import org.springframework.web.bind.annotation.RestController;\r\n"
+		String string = "package lanzador;\n" + "\n" + "import java.io.BufferedWriter;\n"
+				+ "import java.io.FileOutputStream;\n" + "import java.io.FileReader;\n" + "import java.io.FileWriter;\n"
 				+ "import java.io.IOException;\n" + "import java.io.Reader;\n" + "import java.nio.file.Files;\n"
-				+ "import java.nio.file.Paths;\n" + "\n" + "import org.apache.commons.csv.CSVFormat;\n"
-				+ "import org.apache.commons.csv.CSVRecord;\n"
-				+ "import org.springframework.web.bind.annotation.RequestBody;\nimport org.apache.commons.csv.CSVPrinter;\n"
+				+ "import java.nio.file.Paths;\n" + "import java.util.LinkedList;\n" + "import java.util.List;\n"
+				+ "import java.util.UUID;\n" + "\n" + "import org.apache.commons.csv.CSVFormat;\n"
+				+ "import org.apache.commons.csv.CSVParser;\n" + "import org.apache.commons.csv.CSVPrinter;\n"
+				+ "import org.apache.commons.csv.CSVRecord;\n" + "import org.apache.poi.ss.usermodel.Cell;\n"
+				+ "import org.apache.poi.ss.usermodel.Row;\n" + "import org.apache.poi.xssf.usermodel.XSSFSheet;\n"
+				+ "import org.apache.poi.xssf.usermodel.XSSFWorkbook;\n"
+				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
 				+ "import org.springframework.web.bind.annotation.RequestMapping;\n"
-				+ "import org.springframework.web.bind.annotation.RestController; \nimport java.util.LinkedList;\n"
-				+ "\r\n" + "@RestController\r\n" + "public class Controller {\n\n";
+				+ "import org.springframework.web.bind.annotation.RequestMethod;\n"
+				+ "import org.springframework.web.bind.annotation.RequestParam;\n"
+				+ "import org.springframework.web.bind.annotation.RestController;" + "\r\n" + "@RestController\r\n"
+				+ "public class Controller {\n\n";
 
 		ProgramRest rest = Application.getInstance().getProgramRest();
 
@@ -201,6 +205,7 @@ public class WritterSpring implements Writter {
 			string = string + writeService(service);
 		}
 
+		string += writeImportCVS();
 		string = string + "\n}";
 		return string;
 	}
@@ -249,7 +254,8 @@ public class WritterSpring implements Writter {
 
 		str += "					lista.add(valor);\n" + "				}\n" + "				aux++;\n"
 				+ "			}\n" + "\n" + "			reader.close();\n" + "\n" + "		} catch (IOException ex) {\n"
-				+ "			ex.printStackTrace();\n" + "		}\n" + "\n" + "		return lista;"
+				+ "			ex.printStackTrace();\n" + "		}\n" + "\n" + ""
+				+ "	\n							exportCVSintoEXCEL(\"" + service.getName() + "\");" + "\nreturn lista;"
 
 				+ "\n" + "	}\n\n";
 
@@ -286,10 +292,11 @@ public class WritterSpring implements Writter {
 			aux++;
 		}
 
-		str += "					lista.add(valor);\n"
-				+ "				if (valor.getid().equals(id)) {return valor;}}\n" + "				aux++;\n"
-				+ "			}\n" + "\n" + "			reader.close();\n" + "\n" + "		} catch (IOException ex) {\n"
-				+ "			ex.printStackTrace();\n" + "		}\n" + "\n" + "		return  null;"
+		str += "					lista.add(valor);\n" + "				if (valor.getid().equals(id)) {"
+				+ "\n						exportCVSintoEXCEL(\"" + service.getName() + "\");\n" + "return valor;"
+				+ "}}\n" + "				aux++;\n" + "			}\n" + "\n" + "			reader.close();\n" + "\n"
+				+ "		} catch (IOException ex) {\n" + "			ex.printStackTrace();\n" + "		}\n" + "\n"
+				+ "		return  null;"
 
 				+ "\n" + "	}\n\n";
 
@@ -337,7 +344,8 @@ public class WritterSpring implements Writter {
 
 		str += "			csvPrinter.flush();\n" + "\n" + "		} catch (IOException e) {\n"
 				+ "			// TODO Auto-generated catch block\n" + "			e.printStackTrace();\n" + "		}\n"
-				+ "\n" + "		return true;\n" + "	}\n";
+				+ "\n" + "" + "\n						exportCVSintoEXCEL(\"" + service.getName() + "\");\n		"
+				+ "return true;\n" + "	}\n";
 
 		return str;
 	}
@@ -363,9 +371,12 @@ public class WritterSpring implements Writter {
 			i++;
 		}
 
-		str += ");\n" + "\n" + "			csvPrinter.flush();\n" + "			return \"true\";\n"
-				+ "		} catch (IOException e) {\n" + "			// TODO Auto-generated catch block\n"
-				+ "			e.printStackTrace();\n" + "		}\n" + "\n" + "		return \"false\";"
+		str += ");\n" + "\n" + "			csvPrinter.flush();" + "\n"
+				+ "	 						exportCVSintoEXCEL(\"" + service.getName()
+				+ "\");				return \"true\";\n" + "		} catch (IOException e) {\n"
+				+ "			// TODO Auto-generated catch block\n" + "			e.printStackTrace();\n" + "		}\n"
+				+ "\n" + "" + "\n 						exportCVSintoEXCEL(\"" + service.getName() + "\");		"
+				+ "\nreturn \"false\";"
 
 				+ "}\n\n";
 
@@ -414,7 +425,8 @@ public class WritterSpring implements Writter {
 
 		str += "			csvPrinter.flush();\n" + "\n" + "		} catch (IOException e) {\n"
 				+ "			// TODO Auto-generated catch block\n" + "			e.printStackTrace();\n" + "		}\n"
-				+ "\n" + "		return true;\n" + "	}\n\n";
+				+ "\n" + "" + "\n						exportCVSintoEXCEL(\"" + service.getName() + "\");		\n"
+				+ "return true;\n" + "	}\n\n";
 
 		return str;
 	}
@@ -462,4 +474,27 @@ public class WritterSpring implements Writter {
 		return retorno;
 	}
 
+	private String writeImportCVS() {
+
+		String retorno = "";
+
+		retorno += "	private void exportCVSintoEXCEL(String serviceName) {\n" + "\n" + "		try {\n"
+				+ "			XSSFWorkbook workbook = new XSSFWorkbook();\n"
+				+ "			XSSFSheet sheet = workbook.createSheet(serviceName + \"DB\");\n"
+				+ "			int rowCount = 0;\n" + "\n" + "			CSVParser parser = new CSVParser(\n"
+				+ "					new FileReader(\n"
+				+ "							\"target\\\\\" + serviceName + \"DB.csv\"),\n"
+				+ "					CSVFormat.DEFAULT);\n" + "			List<CSVRecord> list = parser.getRecords();\n"
+				+ "			for (CSVRecord record : list) {\n" + "				Row row = sheet.createRow(rowCount);\n"
+				+ "				rowCount++;\n" + "\n" + "				String[] arr = new String[record.size()];\n"
+				+ "				int i = 0;\n" + "				for (String str : record) {\n"
+				+ "					Cell cell = row.createCell(i);\n" + "					cell.setCellValue(str);\n"
+				+ "					arr[i++] = str;\n" + "				}\n" + "			}\n" + "\n"
+				+ "			try (FileOutputStream outputStream = new FileOutputStream(\n"
+				+ "					\"target\\\\\" + serviceName + \"DB.xlsx\")) {\n"
+				+ "				workbook.write(outputStream);\n" + "			}\n" + "			parser.close();\n"
+				+ "		} catch (Exception e) {\n" + "\n" + "		}\n" + "	}" + "		\n\n";
+
+		return retorno;
+	}
 }

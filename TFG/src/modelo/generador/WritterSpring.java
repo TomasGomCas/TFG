@@ -3,6 +3,7 @@ package modelo.generador;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import modelo.Application;
 import modelo.Data;
@@ -38,6 +41,7 @@ public class WritterSpring implements Writter {
 		writeFile(writeController());
 		writeFileClass();
 		writeFileDBClass();
+		createExcelDB();
 	}
 
 	private void copy(File FO, File FD) {
@@ -183,15 +187,16 @@ public class WritterSpring implements Writter {
 
 	private String writeController() {
 
-		String string = "package lanzador;\n" + "\n" + "import java.io.BufferedWriter;\n"
-				+ "import java.io.FileOutputStream;\n" + "import java.io.FileReader;\n" + "import java.io.FileWriter;\n"
-				+ "import java.io.IOException;\n" + "import java.io.Reader;\n" + "import java.nio.file.Files;\n"
-				+ "import java.nio.file.Paths;\n" + "import java.util.LinkedList;\n" + "import java.util.List;\n"
-				+ "import java.util.UUID;\n" + "\n" + "import org.apache.commons.csv.CSVFormat;\n"
-				+ "import org.apache.commons.csv.CSVParser;\n" + "import org.apache.commons.csv.CSVPrinter;\n"
-				+ "import org.apache.commons.csv.CSVRecord;\n" + "import org.apache.poi.ss.usermodel.Cell;\n"
-				+ "import org.apache.poi.ss.usermodel.Row;\n" + "import org.apache.poi.xssf.usermodel.XSSFSheet;\n"
-				+ "import org.apache.poi.xssf.usermodel.XSSFWorkbook;\n"
+		String string = "package lanzador;\n" + "\n" + "import java.io.BufferedWriter;\n" + "import java.io.File;\n"
+				+ "import java.io.FileInputStream;\n" + "import java.io.FileOutputStream;\n"
+				+ "import java.io.FileReader;\n" + "import java.io.FileWriter;\n" + "import java.io.IOException;\n"
+				+ "import java.io.Reader;\n" + "import java.nio.file.Files;\n" + "import java.nio.file.Paths;\n"
+				+ "import java.util.LinkedList;\n" + "import java.util.List;\n" + "import java.util.UUID;\n" + "\n"
+				+ "import org.apache.commons.csv.CSVFormat;\n" + "import org.apache.commons.csv.CSVParser;\n"
+				+ "import org.apache.commons.csv.CSVPrinter;\n" + "import org.apache.commons.csv.CSVRecord;\n"
+				+ "import org.apache.poi.ss.usermodel.Cell;\n" + "import org.apache.poi.ss.usermodel.Row;\n"
+				+ "import org.apache.poi.ss.usermodel.Sheet;\n" + "import org.apache.poi.ss.usermodel.Workbook;\n"
+				+ "import org.apache.poi.ss.usermodel.WorkbookFactory;\n"
 				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
 				+ "import org.springframework.web.bind.annotation.RequestMapping;\n"
 				+ "import org.springframework.web.bind.annotation.RequestMethod;\n"
@@ -478,23 +483,51 @@ public class WritterSpring implements Writter {
 
 		String retorno = "";
 
-		retorno += "	private void exportCVSintoEXCEL(String serviceName) {\n" + "\n" + "		try {\n"
-				+ "			XSSFWorkbook workbook = new XSSFWorkbook();\n"
-				+ "			XSSFSheet sheet = workbook.createSheet(serviceName + \"DB\");\n"
-				+ "			int rowCount = 0;\n" + "\n" + "			CSVParser parser = new CSVParser(\n"
-				+ "					new FileReader(\n"
-				+ "							\"target\\\\\" + serviceName + \"DB.csv\"),\n"
-				+ "					CSVFormat.DEFAULT);\n" + "			List<CSVRecord> list = parser.getRecords();\n"
+		retorno += "	private void exportCVSintoEXCEL(String serviceName) {\n" + "\n" + "		try {\n" + "\n"
+				+ "			FileInputStream inputStream = new FileInputStream(new File(\"target\\\\ExcelDB.xlsx\"));\n"
+				+ "			Workbook workbook = WorkbookFactory.create(inputStream);\n" + "\n"
+				+ "			Sheet sheet = workbook.getSheet(serviceName);\n" + "\n" + "			if (sheet == null) {\n"
+				+ "				sheet = workbook.createSheet(serviceName);\n" + "			}\n" + "\n"
+				+ "			int rowCount = 0;\n" + "\n"
+				+ "			CSVParser parser = new CSVParser(new FileReader(\"target\\\\\" + serviceName + \"DB.csv\"), CSVFormat.DEFAULT);\n"
+				+ "			List<CSVRecord> list = parser.getRecords();\n"
 				+ "			for (CSVRecord record : list) {\n" + "				Row row = sheet.createRow(rowCount);\n"
 				+ "				rowCount++;\n" + "\n" + "				String[] arr = new String[record.size()];\n"
 				+ "				int i = 0;\n" + "				for (String str : record) {\n"
 				+ "					Cell cell = row.createCell(i);\n" + "					cell.setCellValue(str);\n"
 				+ "					arr[i++] = str;\n" + "				}\n" + "			}\n" + "\n"
-				+ "			try (FileOutputStream outputStream = new FileOutputStream(\n"
-				+ "					\"target\\\\\" + serviceName + \"DB.xlsx\")) {\n"
-				+ "				workbook.write(outputStream);\n" + "			}\n" + "			parser.close();\n"
-				+ "		} catch (Exception e) {\n" + "\n" + "		}\n" + "	}" + "		\n\n";
+				+ "			inputStream.close();\n"
+				+ "			FileOutputStream outputStream = new FileOutputStream(\"target\\\\ExcelDB.xlsx\");\n"
+				+ "			workbook.write(outputStream);\n" + "			workbook.close();\n"
+				+ "			outputStream.close();\n" + "\n" + "			parser.close();\n" + "\n"
+				+ "		} catch (Exception e) {\n" + "\n" + "		}\n" + "	}";
 
 		return retorno;
+	}
+
+	private void createExcelDB() {
+
+		Workbook workbook = new XSSFWorkbook();
+
+		for (Service service : Application.getInstance().getProgramRest().getServices()) {
+			workbook.createSheet(service.getName());
+		}
+
+		try (FileOutputStream outputStream = new FileOutputStream(
+				FD.getAbsolutePath() + "\\gs-rest-service-complete\\target\\" + "Excel" + "DB.xlsx")) {
+			try {
+				workbook.write(outputStream);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 	}
 }

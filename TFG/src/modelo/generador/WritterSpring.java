@@ -194,9 +194,16 @@ public class WritterSpring implements Writter {
 				+ "import java.util.LinkedList;\n" + "import java.util.List;\n" + "import java.util.UUID;\n" + "\n"
 				+ "import org.apache.commons.csv.CSVFormat;\n" + "import org.apache.commons.csv.CSVParser;\n"
 				+ "import org.apache.commons.csv.CSVPrinter;\n" + "import org.apache.commons.csv.CSVRecord;\n"
-				+ "import org.apache.poi.ss.usermodel.Cell;\n" + "import org.apache.poi.ss.usermodel.Row;\n"
-				+ "import org.apache.poi.ss.usermodel.Sheet;\n" + "import org.apache.poi.ss.usermodel.Workbook;\n"
+				+ "import org.apache.poi.ss.usermodel.Cell;\n" + "import org.apache.poi.ss.usermodel.CellValue;\n"
+				+ "import org.apache.poi.ss.usermodel.FormulaEvaluator;\n"
+				+ "import org.apache.poi.ss.usermodel.Workbook;\n"
 				+ "import org.apache.poi.ss.usermodel.WorkbookFactory;\n"
+				+ "import org.apache.poi.ss.util.AreaReference;\n" + "import org.apache.poi.ss.util.CellReference;\n"
+				+ "import org.apache.poi.xssf.usermodel.XSSFCell;\n" + "import org.apache.poi.xssf.usermodel.XSSFRow;\n"
+				+ "import org.apache.poi.xssf.usermodel.XSSFSheet;\n"
+				+ "import org.apache.poi.xssf.usermodel.XSSFTable;\n"
+				+ "import org.apache.poi.xssf.usermodel.XSSFTableStyleInfo;\n"
+				+ "import org.apache.poi.xssf.usermodel.XSSFWorkbook;\n"
 				+ "import org.springframework.web.bind.annotation.RequestBody;\n"
 				+ "import org.springframework.web.bind.annotation.RequestMapping;\n"
 				+ "import org.springframework.web.bind.annotation.RequestMethod;\n"
@@ -253,8 +260,23 @@ public class WritterSpring implements Writter {
 
 		int aux = 0;
 		for (Data data : service.getData()) {
-			str += "					valor.set" + data.getName() + "(record.get(" + aux + "));\n";
-			aux++;
+			if (!data.isFormula()) {
+				str += "					valor.set" + data.getName() + "(record.get(" + aux + "));\n";
+				aux++;
+			} else {
+
+				str += "		FileInputStream excelFile" + aux
+						+ " = new FileInputStream(\"target\\\\ExcelDB.xlsx\");\n" + "		Workbook workbook" + aux
+						+ " = new XSSFWorkbook(excelFile" + aux + ");\n" + "		FormulaEvaluator evaluator" + aux
+						+ " = workbook" + aux + ".getCreationHelper().createFormulaEvaluator();\n" + "\n"
+						+ "		Cell cell" + aux + " = workbook" + aux + ".getSheetAt(0).getRow(0).getCell(0);\n"
+						+ "		cell" + aux + ".setCellFormula(\"" + data.getFormulaValue() + "\");\n" + "\n"
+						+ "		CellValue c" + aux + " = evaluator" + aux + ".evaluate(cell" + aux + ");\n" + "		\n"
+						+ "		excelFile" + aux + ".close();\n" + "		workbook" + aux + ".close();";
+
+				str += "					valor.set" + data.getName() + "(\"\" + c" + aux + ".getNumberValue());\n";
+				aux++;
+			}
 		}
 
 		str += "					lista.add(valor);\n" + "				}\n" + "				aux++;\n"
@@ -293,8 +315,23 @@ public class WritterSpring implements Writter {
 
 		int aux = 0;
 		for (Data data : service.getData()) {
-			str += "					valor.set" + data.getName() + "(record.get(" + aux + "));\n";
-			aux++;
+			if (!data.isFormula()) {
+				str += "					valor.set" + data.getName() + "(record.get(" + aux + "));\n";
+				aux++;
+			} else {
+
+				str += "		FileInputStream excelFile" + aux
+						+ " = new FileInputStream(\"target\\\\ExcelDB.xlsx\");\n" + "		Workbook workbook" + aux
+						+ " = new XSSFWorkbook(excelFile" + aux + ");\n" + "		FormulaEvaluator evaluator" + aux
+						+ " = workbook" + aux + ".getCreationHelper().createFormulaEvaluator();\n" + "\n"
+						+ "		Cell cell" + aux + " = workbook" + aux + ".getSheetAt(0).getRow(0).getCell(0);\n"
+						+ "		cell" + aux + ".setCellFormula(\"" + data.getFormulaValue() + "\");\n" + "\n"
+						+ "		CellValue c" + aux + " = evaluator" + aux + ".evaluate(cell" + aux + ");\n" + "		\n"
+						+ "		excelFile" + aux + ".close();\n" + "		workbook" + aux + ".close();";
+
+				str += "					valor.set" + data.getName() + "(\"\" + c" + aux + ".getNumberValue());\n";
+				aux++;
+			}
 		}
 
 		str += "					lista.add(valor);\n" + "				if (valor.getid().equals(id)) {"
@@ -484,23 +521,48 @@ public class WritterSpring implements Writter {
 		String retorno = "";
 
 		retorno += "	private void exportCVSintoEXCEL(String serviceName) {\n" + "\n" + "		try {\n" + "\n"
-				+ "			FileInputStream inputStream = new FileInputStream(new File(\"target\\\\ExcelDB.xlsx\"));\n"
-				+ "			Workbook workbook = WorkbookFactory.create(inputStream);\n" + "\n"
-				+ "			Sheet sheet = workbook.getSheet(serviceName);\n" + "\n" + "			if (sheet == null) {\n"
-				+ "				sheet = workbook.createSheet(serviceName);\n" + "			}\n" + "\n"
-				+ "			int rowCount = 0;\n" + "\n"
 				+ "			CSVParser parser = new CSVParser(new FileReader(\"target\\\\\" + serviceName + \"DB.csv\"), CSVFormat.DEFAULT);\n"
 				+ "			List<CSVRecord> list = parser.getRecords();\n"
-				+ "			for (CSVRecord record : list) {\n" + "				Row row = sheet.createRow(rowCount);\n"
-				+ "				rowCount++;\n" + "\n" + "				String[] arr = new String[record.size()];\n"
-				+ "				int i = 0;\n" + "				for (String str : record) {\n"
-				+ "					Cell cell = row.createCell(i);\n" + "					cell.setCellValue(str);\n"
-				+ "					arr[i++] = str;\n" + "				}\n" + "			}\n" + "\n"
-				+ "			inputStream.close();\n"
-				+ "			FileOutputStream outputStream = new FileOutputStream(\"target\\\\ExcelDB.xlsx\");\n"
-				+ "			workbook.write(outputStream);\n" + "			workbook.close();\n"
-				+ "			outputStream.close();\n" + "\n" + "			parser.close();\n" + "\n"
-				+ "		} catch (Exception e) {\n" + "\n" + "		}\n" + "	}";
+				+ "			int numHeaders = list.get(0).size();\n" + "\n"
+				+ "			FileInputStream inputStream = new FileInputStream(new File(\"target\\\\ExcelDB.xlsx\"));\n"
+				+ "			Workbook wb = WorkbookFactory.create(inputStream);\n" + "\n"
+				+ "			int auz = wb.getSheetIndex(serviceName);\n" + "			wb.removeSheetAt(auz);\n"
+				+ "			wb.createSheet(serviceName);\n"
+				+ "			XSSFSheet sheet = (XSSFSheet) wb.getSheet(serviceName);\n" + "\n"
+				+ "			// Set which area the table should be placed in\n"
+				+ "			AreaReference reference = wb.getCreationHelper().createAreaReference(new CellReference(0, 0),\n"
+				+ "					new CellReference(list.size(), numHeaders - 1));\n" + "\n" + "			// Create\n"
+				+ "			XSSFTable table = sheet.createTable(reference); // creates a table having 3 columns as of area reference\n"
+				+ "			// sheet.h\n" + "			// but all of those have id 1, so we need repairing\n"
+				+ "//			table.getCTTable().getTableColumns().getTableColumnArray(1).setId(2);\n"
+				+ "//			table.getCTTable().getTableColumns().getTableColumnArray(2).setId(3);\n" + "\n"
+				+ "			table.setName(serviceName);\n" + "			table.setDisplayName(serviceName);\n" + "\n"
+				+ "			// For now, create the initial style in a low-level way\n"
+				+ "			table.getCTTable().addNewTableStyleInfo();\n"
+				+ "			table.getCTTable().getTableStyleInfo().setName(serviceName);\n" + "\n"
+				+ "			// Style the table\n"
+				+ "			XSSFTableStyleInfo style = (XSSFTableStyleInfo) table.getStyle();\n"
+				+ "			style.setName(serviceName);\n" + "			style.setShowColumnStripes(true);\n"
+				+ "			style.setShowRowStripes(true);\n" + "			style.setFirstColumn(true);\n"
+				+ "			style.setLastColumn(true);\n" + "			style.setShowRowStripes(true);\n"
+				+ "			style.setShowColumnStripes(true);\n" + "\n" + "			XSSFRow row;\n"
+				+ "			XSSFCell cell;\n" + "			int rowCount = 0;\n" + "			int i = 0;\n"
+				+ "			for (CSVRecord record : list) {\n" + "				// Create row\n"
+				+ "				row = sheet.createRow(i);\n"
+				+ "				for (int j = 0; j < numHeaders; j++) {\n" + "					// Create cell\n"
+				+ "					cell = row.createCell(j);\n" + "					if (i == 0) {\n"
+				+ "						cell.setCellValue(record.get(j).toString());\n" + "					} else {\n"
+				+ "						if (record.get(j).toString().matches(\"[0-9]*\")) {\n"
+				+ "							if (!record.get(j).toString().equals(\"\")) {\n"
+				+ "								cell.setCellValue(new Integer(record.get(j).toString()));\n"
+				+ "							} else {\n" + "								cell.setCellValue(\"\");\n"
+				+ "							}\n" + "						} else {\n"
+				+ "							cell.setCellValue(record.get(j).toString());\n" + "						}\n"
+				+ "					}\n" + "				}\n" + "				i++;\n" + "			}\n"
+				+ "			parser.close();\n" + "\n"
+				+ "			FileOutputStream fileOut = new FileOutputStream(\"target\\\\ExcelDB.xlsx\");\n"
+				+ "			wb.write(fileOut);\n" + "\n" + "		} catch (Exception e) {\n"
+				+ "			// TODO: handle exception\n" + "		}\n" + "	}";
 
 		return retorno;
 	}

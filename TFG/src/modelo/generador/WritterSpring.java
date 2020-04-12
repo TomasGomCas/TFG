@@ -413,10 +413,15 @@ public class WritterSpring implements Writter {
 
 		int i = 0;
 		for (Data data : service.getData()) {
-			if (i < service.getData().size() - 1)
-				str += " body.get" + data.getName() + "(),";
-			else
+			if (i < service.getData().size() - 1) {
+				if (!data.isFormula()) {
+					str += " body.get" + data.getName() + "(),";
+				} else {
+					str += "\"=" + data.getFormulaValue() + "\",";
+				}
+			} else {
 				str += " UUID.randomUUID().toString()";
+			}
 
 			i++;
 		}
@@ -537,18 +542,12 @@ public class WritterSpring implements Writter {
 				+ "			int auz = wb.getSheetIndex(serviceName);\n" + "			wb.removeSheetAt(auz);\n"
 				+ "			wb.createSheet(serviceName);\n"
 				+ "			XSSFSheet sheet = (XSSFSheet) wb.getSheet(serviceName);\n" + "\n"
-				+ "			// Set which area the table should be placed in\n"
 				+ "			AreaReference reference = wb.getCreationHelper().createAreaReference(new CellReference(0, 0),\n"
-				+ "					new CellReference(list.size(), numHeaders - 1));\n" + "\n" + "			// Create\n"
+				+ "					new CellReference(list.size(), numHeaders - 1));\n" + "\n"
 				+ "			XSSFTable table = sheet.createTable(reference); // creates a table having 3 columns as of area reference\n"
-				+ "			// sheet.h\n" + "			// but all of those have id 1, so we need repairing\n"
-				+ "//			table.getCTTable().getTableColumns().getTableColumnArray(1).setId(2);\n"
-				+ "//			table.getCTTable().getTableColumns().getTableColumnArray(2).setId(3);\n" + "\n"
-				+ "			table.setName(serviceName);\n" + "			table.setDisplayName(serviceName);\n" + "\n"
-				+ "			// For now, create the initial style in a low-level way\n"
-				+ "			table.getCTTable().addNewTableStyleInfo();\n"
+				+ "\n" + "			table.setName(serviceName);\n" + "			table.setDisplayName(serviceName);\n"
+				+ "\n" + "			table.getCTTable().addNewTableStyleInfo();\n"
 				+ "			table.getCTTable().getTableStyleInfo().setName(serviceName);\n" + "\n"
-				+ "			// Style the table\n"
 				+ "			XSSFTableStyleInfo style = (XSSFTableStyleInfo) table.getStyle();\n"
 				+ "			style.setName(serviceName);\n" + "			style.setShowColumnStripes(true);\n"
 				+ "			style.setShowRowStripes(true);\n" + "			style.setFirstColumn(true);\n"
@@ -559,18 +558,22 @@ public class WritterSpring implements Writter {
 				+ "				row = sheet.createRow(i);\n"
 				+ "				for (int j = 0; j < numHeaders; j++) {\n" + "					// Create cell\n"
 				+ "					cell = row.createCell(j);\n" + "					if (i == 0) {\n"
-				+ "						cell.setCellValue(record.get(j).toString());\n" + "					} else {\n"
+				+ "						cell.setCellValue(record.get(j).toString());\n"
+				+ "						FileOutputStream fileOut = new FileOutputStream(\"target\\\\ExcelDB.xlsx\");\n"
+				+ "						wb.write(fileOut);\n" + "					} else {\n"
 				+ "						if (record.get(j).toString().matches(\"[0-9]*\")) {\n"
 				+ "							if (!record.get(j).toString().equals(\"\")) {\n"
 				+ "								cell.setCellValue(new Integer(record.get(j).toString()));\n"
 				+ "							} else {\n" + "								cell.setCellValue(\"\");\n"
 				+ "							}\n" + "						} else {\n"
-				+ "							cell.setCellValue(record.get(j).toString());\n" + "						}\n"
-				+ "					}\n" + "				}\n" + "				i++;\n" + "			}\n"
-				+ "			parser.close();\n" + "\n"
-				+ "			FileOutputStream fileOut = new FileOutputStream(\"target\\\\ExcelDB.xlsx\");\n"
+				+ "							cell.setCellValue(record.get(j).toString());\n"
+				+ "							if (record.get(j).toString().contains(\"=\")) {\n"
+				+ "								cell.setCellFormula(record.get(j).toString().replace(\"=\", \"\"));\n"
+				+ "							}\n" + "\n" + "						}\n" + "					}\n"
+				+ "				}\n" + "				i++;\n" + "			}\n" + "			parser.close();\n"
+				+ "\n" + "			FileOutputStream fileOut = new FileOutputStream(\"target\\\\ExcelDB.xlsx\");\n"
 				+ "			wb.write(fileOut);\n" + "\n" + "		} catch (Exception e) {\n"
-				+ "			// TODO: handle exception\n" + "		}\n" + "	}";
+				+ "			e.printStackTrace();\n" + "		}\n" + "	}\n";
 
 		return retorno;
 	}

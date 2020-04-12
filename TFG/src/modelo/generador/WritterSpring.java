@@ -192,10 +192,11 @@ public class WritterSpring implements Writter {
 				+ "import java.io.FileReader;\n" + "import java.io.FileWriter;\n" + "import java.io.IOException;\n"
 				+ "import java.io.Reader;\n" + "import java.nio.file.Files;\n" + "import java.nio.file.Paths;\n"
 				+ "import java.util.LinkedList;\n" + "import java.util.List;\n" + "import java.util.UUID;\n" + "\n"
-				+ "import org.apache.commons.csv.CSVFormat;\n" + "import org.apache.commons.csv.CSVParser;\n"
-				+ "import org.apache.commons.csv.CSVPrinter;\n" + "import org.apache.commons.csv.CSVRecord;\n"
-				+ "import org.apache.poi.ss.usermodel.Cell;\n" + "import org.apache.poi.ss.usermodel.CellValue;\n"
-				+ "import org.apache.poi.ss.usermodel.FormulaEvaluator;\n"
+				+ "import org.apache.commons.csv.CSVFormat;\n import java.io.FileOutputStream;\n"
+				+ "import org.apache.commons.csv.CSVParser;\n" + "import org.apache.commons.csv.CSVPrinter;\n"
+				+ "import org.apache.commons.csv.CSVRecord;\n" + "import org.apache.poi.ss.usermodel.Cell;\n"
+				+ "import org.apache.poi.ss.usermodel.CellValue;\n"
+				+ "import org.apache.poi.ss.usermodel.FormulaEvaluator;\n import org.apache.poi.ss.usermodel.CellType;\n"
 				+ "import org.apache.poi.ss.usermodel.Workbook;\n"
 				+ "import org.apache.poi.ss.usermodel.WorkbookFactory;\n"
 				+ "import org.apache.poi.ss.util.AreaReference;\n" + "import org.apache.poi.ss.util.CellReference;\n"
@@ -269,10 +270,17 @@ public class WritterSpring implements Writter {
 						+ " = new FileInputStream(\"target\\\\ExcelDB.xlsx\");\n" + "		Workbook workbook" + aux
 						+ " = new XSSFWorkbook(excelFile" + aux + ");\n" + "		FormulaEvaluator evaluator" + aux
 						+ " = workbook" + aux + ".getCreationHelper().createFormulaEvaluator();\n" + "\n"
-						+ "		Cell cell" + aux + " = workbook" + aux + ".getSheetAt(0).getRow(0).getCell(0);\n"
-						+ "		cell" + aux + ".setCellFormula(\"" + data.getFormulaValue() + "\");\n" + "\n"
-						+ "		CellValue c" + aux + " = evaluator" + aux + ".evaluate(cell" + aux + ");\n" + "		\n"
-						+ "		excelFile" + aux + ".close();\n" + "		workbook" + aux + ".close();";
+						+ "		Cell cell" + aux + " = workbook" + aux + ".getSheet(\"" + service.getName()
+						+ "\").getRow(aux).getCell(" + aux + ");\n" + "		cell" + aux + ".setCellFormula(\""
+						+ data.getFormulaValue() + "\");\n" + "\n" + "		CellValue c" + aux + " = evaluator" + aux
+						+ ".evaluate(cell" + aux + ");\n" + "		\n" + "" + "					workbook" + aux
+						+ ".getSheet(\"" + service.getName() + "\").getRow(aux).getCell(" + aux + ").setCellValue(c"
+						+ aux + ".getNumberValue());\n" + "					workbook" + aux + ".getSheet(\""
+						+ service.getName() + "\").getRow(aux).getCell(" + aux + ").setCellType(CellType.NUMERIC);\n"
+						+ "					FileOutputStream fileOut" + aux
+						+ " = new FileOutputStream(\"target\\\\ExcelDB.xlsx\");\n" + "					workbook" + aux
+						+ ".write(fileOut" + aux + ");		excelFile" + aux + ".close();\n" + "		workbook" + aux
+						+ ".close();";
 
 				str += "					valor.set" + data.getName() + "(\"\" + c" + aux + ".getNumberValue());\n";
 				aux++;

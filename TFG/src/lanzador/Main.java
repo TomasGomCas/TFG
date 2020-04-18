@@ -4,7 +4,6 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -89,9 +88,10 @@ public class Main extends JFrame {
 				try {
 					Application.getInstance().generateProgramSpring(rutaEntrada, rutaSalida);
 					JOptionPane.showMessageDialog(contentPane, "Codigo generado correctamente");
-				} catch (IOException e1) {
+				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(contentPane,
-							"Error en la generacion de codigo // Traza: " + e1.toString());
+							"Error en la generacion de codigo, por favor revise las reglas de utilizacion // Traza: "
+									+ e1.toString());
 					e1.printStackTrace();
 				}
 			}

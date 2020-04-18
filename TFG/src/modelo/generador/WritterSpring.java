@@ -31,15 +31,30 @@ import modelo.Data;
 import modelo.ProgramRest;
 import modelo.Service;
 
+/**
+ * The Class WritterSpring.
+ */
 public class WritterSpring implements Writter {
 
+	/** The aux. */
 	// ATRIBUTES
 	private int aux = 0;
+
+	/** The fo. */
 	private File FO = new File("target\\baseCode\\gs-rest-service-complete");
+
+	/** The fd. */
 	private File FD = new File("target\\generatedCode");
+
+	/** The fichero. */
 	private File fichero = new File(
 			"target\\generatedCode\\gs-rest-service-complete\\src\\main\\java\\lanzador\\Controller.java");
 
+	/**
+	 * Write.
+	 *
+	 * @param rutaSalida the ruta salida
+	 */
 	// METHODS
 	@Override
 	public void write(String rutaSalida) {
@@ -60,52 +75,47 @@ public class WritterSpring implements Writter {
 		}
 	}
 
+	/**
+	 * Copy.
+	 *
+	 * @param FO the fo
+	 * @param FD the fd
+	 */
 	private void copy(File FO, File FD) {
-		// si el origen no es una carpeta
+
 		if (!FO.isDirectory()) {
-			// Llamo la funcion que lo copia
 			copyFile(FO, FD);
 		} else {
-			// incremento el contador de entradas a esta funci�n
 			aux++;
-			// solo se entra ac� cuando se quiera copiar una carpeta y
-			// sea la primera es decir la carpeta padre
 			if (aux == 1) {
-				// Cambio la ruta destino por el nombre que tenia mas el nombre de
-				// la carpeta padre
 				FD = new File(FD.getAbsolutePath() + "/" + FO.getName());
-				// si la carpeta no existe la creo
 				if (!FD.exists()) {
 					FD.mkdir();
 				}
 			}
-			// obtengo el nombre de todos los archivos y carpetas que
-			// pertenecen a este fichero(FO)
-			String[] Rutas = FO.list();
-			// recorro uno a uno el contenido de la carpeta
 
-			/*
-			 * IMPORTANTE:EL HML SE DESCONFIGURA Y NO ME DEJA PORNE LA LINEA FO SIGUIENTE
-			 * BIEN, TENGO PROBLEMA CON EL SIGNO MENOR.SI UD LE PASA LO MISMO DESCARGE EL
-			 * PROGRAMA CON EL LINK DE ABAJO Y V�ALO DE FOMA SEGURA
-			 */
+			String[] Rutas = FO.list();
 			for (int i = 0; i < Rutas.length; i++) {
-				// establezco el nombre del nuevo archivo origen
+
 				File FnueOri = new File(FO.getAbsolutePath() + "/" + Rutas[i]);
-				// establezco el nombre del nuevo archivo destino
+
 				File FnueDest = new File(FD.getAbsolutePath() + "/" + Rutas[i]);
-				// si no existe el archivo destino lo creo
+
 				if (FnueOri.isDirectory() && !FnueDest.exists()) {
 					FnueDest.mkdir();
 				}
-				// uso recursividad y llamo a esta misma funcion has llegar
-				// al ultimo elemento
 				copy(FnueOri, FnueDest);
 			}
 		}
 
 	}
 
+	/**
+	 * Copy file.
+	 *
+	 * @param FO the fo
+	 * @param FD the fd
+	 */
 	private void copyFile(File FO, File FD) {
 		try {
 			if (FO.exists()) {
@@ -134,6 +144,9 @@ public class WritterSpring implements Writter {
 		}
 	}
 
+	/**
+	 * Creates the controller file.
+	 */
 	private void createControllerFile() {
 
 		try {
@@ -144,6 +157,11 @@ public class WritterSpring implements Writter {
 
 	}
 
+	/**
+	 * Write file.
+	 *
+	 * @param string the string
+	 */
 	private void writeFile(String string) {
 
 		BufferedWriter writer;
@@ -158,6 +176,9 @@ public class WritterSpring implements Writter {
 
 	}
 
+	/**
+	 * Write file class.
+	 */
 	private void writeFileClass() {
 
 		for (Service service : Application.getInstance().getProgramRest().getServices()) {
@@ -175,6 +196,9 @@ public class WritterSpring implements Writter {
 		}
 	}
 
+	/**
+	 * Write file DB class.
+	 */
 	private void writeFileDBClass() {
 
 		for (Service service : Application.getInstance().getProgramRest().getServices()) {
@@ -201,6 +225,11 @@ public class WritterSpring implements Writter {
 
 	}
 
+	/**
+	 * Write controller.
+	 *
+	 * @return the string
+	 */
 	private String writeController() {
 
 		String string = "package lanzador;\n" + "\n" + "import java.io.BufferedWriter;\n" + "import java.io.File;\n"
@@ -239,6 +268,12 @@ public class WritterSpring implements Writter {
 		return string;
 	}
 
+	/**
+	 * Write service.
+	 *
+	 * @param service the service
+	 * @return the string
+	 */
 	private String writeService(Service service) {
 
 		String str = "";
@@ -251,6 +286,12 @@ public class WritterSpring implements Writter {
 		return str;
 	}
 
+	/**
+	 * Write get all.
+	 *
+	 * @param service the service
+	 * @return the string
+	 */
 	private String writeGetAll(Service service) {
 
 		String str = "@RequestMapping(value = \"/" + service.getName() + "\", method = RequestMethod.GET)\n\n"
@@ -313,6 +354,12 @@ public class WritterSpring implements Writter {
 		return str;
 	}
 
+	/**
+	 * Write get by id.
+	 *
+	 * @param service the service
+	 * @return the string
+	 */
 	private String writeGetById(Service service) {
 
 		String str = "@RequestMapping(value = \"/" + service.getName() + "ID\", method = RequestMethod.GET)\n\n"
@@ -373,6 +420,12 @@ public class WritterSpring implements Writter {
 		return str;
 	}
 
+	/**
+	 * Write delete.
+	 *
+	 * @param service the service
+	 * @return the string
+	 */
 	private String writeDelete(Service service) {
 
 		String str = "";
@@ -421,6 +474,12 @@ public class WritterSpring implements Writter {
 		return str;
 	}
 
+	/**
+	 * Write post.
+	 *
+	 * @param service the service
+	 * @return the string
+	 */
 	private String writePost(Service service) {
 
 		String str = "@RequestMapping(value = \"/" + service.getName() + "\", method = RequestMethod.POST)\n"
@@ -459,6 +518,12 @@ public class WritterSpring implements Writter {
 		return str;
 	}
 
+	/**
+	 * Write put.
+	 *
+	 * @param service the service
+	 * @return the string
+	 */
 	private String writePut(Service service) {
 
 		String str = "";
@@ -507,6 +572,12 @@ public class WritterSpring implements Writter {
 		return str;
 	}
 
+	/**
+	 * Write body class.
+	 *
+	 * @param service the service
+	 * @return the string
+	 */
 	private String writeBodyClass(Service service) {
 
 		String retorno = "package lanzador;" + "\n\npublic class " + service.getName() + "Body {\n\n";
@@ -550,6 +621,11 @@ public class WritterSpring implements Writter {
 		return retorno;
 	}
 
+	/**
+	 * Write import CVS.
+	 *
+	 * @return the string
+	 */
 	private String writeImportCVS() {
 
 		String retorno = "";
@@ -599,6 +675,11 @@ public class WritterSpring implements Writter {
 		return retorno;
 	}
 
+	/**
+	 * Creates the excel DB.
+	 *
+	 * @throws Exception the exception
+	 */
 	private void createExcelDB() throws Exception {
 
 		Workbook workbook = new XSSFWorkbook();

@@ -15,18 +15,36 @@ import javax.swing.filechooser.FileSystemView;
 
 import modelo.Application;
 
+/**
+ * The Class Main. Encargada de lanzar el programa
+ */
 public class Main extends JFrame {
 
+	/** The content pane. */
 	private JPanel contentPane;
+
+	/** The texto entrada. */
 	private JLabel textoEntrada;
+
+	/** The texto salida. */
 	private JLabel textoSalida;
+
+	/** The ruta entrada. */
 	private String rutaEntrada;
+
+	/** The ruta salida. */
 	private String rutaSalida;
+
+	/** The file chooser entrada. */
 	private JFileChooser fileChooserEntrada;
+
+	/** The file chooser salida. */
 	private JFileChooser fileChooserSalida;
 
 	/**
 	 * Launch the application.
+	 *
+	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -64,7 +82,7 @@ public class Main extends JFrame {
 			}
 		});
 
-		// Fila Entrada
+		// Fila Salida
 		textoSalida = new JLabel();
 		textoSalida.setText("Ninguna Seleccionada");
 
@@ -80,7 +98,7 @@ public class Main extends JFrame {
 			}
 		});
 
-		// Generar
+		// Fila Generar
 		JButton botonGenerar = new JButton("Generar");
 		botonGenerar.addActionListener(new ActionListener() {
 			@Override

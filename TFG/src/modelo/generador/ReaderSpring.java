@@ -17,18 +17,31 @@ import modelo.Data;
 import modelo.ProgramRest;
 import modelo.Service;
 
+/**
+ * The Class ReaderSpring.
+ */
 public class ReaderSpring implements Reader {
 
+	/** The file. */
 	// ATRIBUTES
 	private File file = new File("target\\excel\\excel.xlsx");
 
 	// CONSTRUCTORS
 
+	/**
+	 * Inits the reader.
+	 */
 	// METHODS
 	private void init() {
 		Application.getInstance().setProgramRest(new ProgramRest());
 	}
 
+	/**
+	 * Read. Encargado de leer
+	 * 
+	 * @param rutaEntrada the ruta entrada
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	@Override
 	public void read(String rutaEntrada) throws IOException {
 
@@ -38,6 +51,11 @@ public class ReaderSpring implements Reader {
 
 	}
 
+	/**
+	 * Read sheet.
+	 *
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void readSheet() throws IOException {
 
 		FileInputStream excelFile = new FileInputStream(file);
@@ -56,6 +74,13 @@ public class ReaderSpring implements Reader {
 
 	}
 
+	/**
+	 * Read table headers.
+	 *
+	 * @param service the service
+	 * @param sheet   the sheet
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 */
 	private void readTableHeaders(Service service, Sheet sheet) throws IOException {
 
 		for (Cell mycell : sheet.getRow(0)) {
@@ -70,6 +95,12 @@ public class ReaderSpring implements Reader {
 		service.getData().add(dataInput);
 	}
 
+	/**
+	 * Read body sheet.
+	 *
+	 * @param service the service
+	 * @param sheet   the sheet
+	 */
 	private void readBodySheet(Service service, Sheet sheet) {
 
 		Iterator<Row> iterator = sheet.iterator();

@@ -359,12 +359,13 @@ public class WritterSpring implements Writter {
 
 		str += "	@RequestMapping(value = \"/" + service.getName() + "\", method = RequestMethod.DELETE)\n"
 				+ "	public boolean " + service.getName() + "Delete(@RequestParam(value = \"id\") String id) {\n" + "\n"
-				+ "		// leer records\n" + "		LinkedList<" + service.getName() + "Body> lista = "
-				+ service.getName() + "getAll();\n" + "		LinkedList<" + service.getName()
+				+ "boolean retorno = false;\n		// leer records\n" + "		LinkedList<" + service.getName()
+				+ "Body> lista = " + service.getName() + "getAll();\n" + "		LinkedList<" + service.getName()
 				+ "Body> listaNueva = new LinkedList<" + service.getName() + "Body>();\n" + "		for ("
 				+ service.getName() + "Body row : lista) {\n" + "			if (!row.getid().equals(id))\n"
-				+ "				listaNueva.add(row);\n" + "		}\n" + "\n" + "		// Escribir records\n"
-				+ "		try {\n" + "			BufferedWriter writer;\n"
+				+ "				listaNueva.add(row);\n			else {\n" + "				retorno = true;\n"
+				+ "			}" + "		}\n" + "\n" + "		// Escribir records\n" + "		try {\n"
+				+ "			BufferedWriter writer;\n"
 				+ "			writer = new BufferedWriter(new FileWriter(\"target\\\\" + service.getName()
 				+ "DB.csv\"));\n" + "\n" + "			CSVPrinter csvPrinter = new CSVPrinter(writer,\n"
 				+ "					";
@@ -395,7 +396,7 @@ public class WritterSpring implements Writter {
 		str += "			csvPrinter.flush();\n" + "\n" + "		} catch (IOException e) {\n"
 				+ "			// TODO Auto-generated catch block\n" + "			e.printStackTrace();\n" + "		}\n"
 				+ "\n" + "" + "\n						exportCVSintoEXCEL(\"" + service.getName() + "\");\n		"
-				+ "return true;\n" + "	}\n";
+				+ "return retorno;\n" + "	}\n";
 
 		return str;
 	}

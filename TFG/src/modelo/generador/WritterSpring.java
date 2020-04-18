@@ -3,16 +3,27 @@ package modelo.generador;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFTable;
+import org.apache.poi.xssf.usermodel.XSSFTableStyleInfo;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import modelo.Application;
@@ -41,7 +52,12 @@ public class WritterSpring implements Writter {
 		writeFile(writeController());
 		writeFileClass();
 		writeFileDBClass();
-		createExcelDB();
+		try {
+			createExcelDB();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void copy(File FO, File FD) {
@@ -583,28 +599,96 @@ public class WritterSpring implements Writter {
 		return retorno;
 	}
 
-	private void createExcelDB() {
+	private void createExcelDB() throws Exception {
 
 		Workbook workbook = new XSSFWorkbook();
 
-		for (Service service : Application.getInstance().getProgramRest().getServices()) {
-			workbook.createSheet(service.getName());
-		}
+		FileOutputStream fileOut2 = new FileOutputStream(
+				FD.getAbsolutePath() + "\\gs-rest-service-complete\\target\\ExcelDB.xlsx");
+		workbook.write(fileOut2);
+		fileOut2.close();
 
-		try (FileOutputStream outputStream = new FileOutputStream(
-				FD.getAbsolutePath() + "\\gs-rest-service-complete\\target\\" + "Excel" + "DB.xlsx")) {
+		for (Service service : Application.getInstance().getProgramRest().getServices()) {
+
 			try {
-				workbook.write(outputStream);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+
+				CSVParser parser = new CSVParser(new FileReader(
+						FD.getAbsolutePath() + "\\gs-rest-service-complete\\target\\" + service.getName() + "DB.csv"),
+						CSVFormat.DEFAULT);
+				List<CSVRecord> list = parser.getRecords();
+				int numHeaders = list.get(0).size();
+
+				FileInputStream inputStream = new FileInputStream(
+						new File(FD.getAbsolutePath() + "\\gs-rest-service-complete\\target\\ExcelDB.xlsx"));
+				Workbook wb = WorkbookFactory.create(inputStream);
+
+				int auz = wb.getSheetIndex(service.getName());
+				wb.createSheet(service.getName());
+				XSSFSheet sheet = (XSSFSheet) wb.getSheet(service.getName());
+
+				AreaReference reference = wb.getCreationHelper().createAreaReference(new CellReference(0, 0),
+						new CellReference(list.size(), numHeaders - 1));
+
+				XSSFTable table = sheet.createTable(reference); // creates a table having 3 columns as of area reference
+
+				table.setName(service.getName());
+				table.setDisplayName(service.getName());
+
+				table.getCTTable().addNewTableStyleInfo();
+				table.getCTTable().getTableStyleInfo().setName(service.getName());
+
+				XSSFTableStyleInfo style = (XSSFTableStyleInfo) table.getStyle();
+				style.setName(service.getName());
+				style.setShowColumnStripes(true);
+				style.setShowRowStripes(true);
+				style.setFirstColumn(true);
+				style.setLastColumn(true);
+				style.setShowRowStripes(true);
+				style.setShowColumnStripes(true);
+
+				XSSFRow row;
+				XSSFCell cell;
+				int rowCount = 0;
+				int i = 0;
+				for (CSVRecord record : list) {
+					// Create row
+					row = sheet.createRow(i);
+					for (int j = 0; j < numHeaders; j++) {
+						// Create cell
+						cell = row.createCell(j);
+						if (i == 0) {
+							cell.setCellValue(record.get(j).toString());
+							FileOutputStream fileOut = new FileOutputStream(
+									FD.getAbsolutePath() + "\\gs-rest-service-complete\\target\\ExcelDB.xlsx");
+							wb.write(fileOut);
+						} else {
+							if (record.get(j).toString().matches("[0-9]*")) {
+								if (!record.get(j).toString().equals("")) {
+									cell.setCellValue(new Integer(record.get(j).toString()));
+								} else {
+									cell.setCellValue("");
+								}
+							} else {
+								cell.setCellValue(record.get(j).toString());
+								if (record.get(j).toString().contains("=")) {
+									cell.setCellFormula(record.get(j).toString().replace("=", ""));
+								}
+
+							}
+						}
+					}
+					i++;
+				}
+				parser.close();
+
+				FileOutputStream fileOut = new FileOutputStream(
+						FD.getAbsolutePath() + "\\gs-rest-service-complete\\target\\ExcelDB.xlsx");
+				wb.write(fileOut);
+
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+
 		}
 
 	}

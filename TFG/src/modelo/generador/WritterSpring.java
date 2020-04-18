@@ -445,13 +445,13 @@ public class WritterSpring implements Writter {
 
 		str += "	\n@RequestMapping(value = \"/" + service.getName() + "\", method = RequestMethod.PUT)\n"
 				+ "	public boolean " + service.getName() + "PUT(@RequestParam(value = \"id\") String id,@RequestBody "
-				+ service.getName() + "Body body) {\n" + "\n" + "		// leer records\n" + "		LinkedList<"
-				+ service.getName() + "Body> lista = " + service.getName() + "getAll();\n" + "		LinkedList<"
-				+ service.getName() + "Body> listaNueva = new LinkedList<" + service.getName() + "Body>();\n"
-				+ "		for (" + service.getName() + "Body row : lista) {\n"
+				+ service.getName() + "Body body) {\n" + "\n" + "boolean retorno = false;\n		// leer records\n"
+				+ "		LinkedList<" + service.getName() + "Body> lista = " + service.getName() + "getAll();\n"
+				+ "		LinkedList<" + service.getName() + "Body> listaNueva = new LinkedList<" + service.getName()
+				+ "Body>();\n" + "		for (" + service.getName() + "Body row : lista) {\n"
 				+ "			if (row.getid().equals(id)){\n"
-				+ "row = body;\nrow.setid(id);				}listaNueva.add(row);\n" + "		}\n" + "\n"
-				+ "		// Escribir records\n" + "		try {\n" + "			BufferedWriter writer;\n"
+				+ "row = body;\nrow.setid(id);\n\tretorno = true;				}listaNueva.add(row);\n" + "		}\n"
+				+ "\n" + "		// Escribir records\n" + "		try {\n" + "			BufferedWriter writer;\n"
 				+ "			writer = new BufferedWriter(new FileWriter(\"target\\\\" + service.getName()
 				+ "DB.csv\"));\n" + "\n" + "			CSVPrinter csvPrinter = new CSVPrinter(writer,\n"
 				+ "					";
@@ -482,7 +482,7 @@ public class WritterSpring implements Writter {
 		str += "			csvPrinter.flush();\n" + "\n" + "		} catch (IOException e) {\n"
 				+ "			// TODO Auto-generated catch block\n" + "			e.printStackTrace();\n" + "		}\n"
 				+ "\n" + "" + "\n						exportCVSintoEXCEL(\"" + service.getName() + "\");		\n"
-				+ "return true;\n" + "	}\n\n";
+				+ "return retorno;\n" + "	}\n\n";
 
 		return str;
 	}

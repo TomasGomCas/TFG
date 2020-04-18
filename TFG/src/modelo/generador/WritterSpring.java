@@ -332,10 +332,14 @@ public class WritterSpring implements Writter {
 						+ " = new FileInputStream(\"target\\\\ExcelDB.xlsx\");\n" + "		Workbook workbook" + aux
 						+ " = new XSSFWorkbook(excelFile" + aux + ");\n" + "		FormulaEvaluator evaluator" + aux
 						+ " = workbook" + aux + ".getCreationHelper().createFormulaEvaluator();\n" + "\n"
-						+ "		Cell cell" + aux + " = workbook" + aux + ".getSheetAt(0).getRow(0).getCell(0);\n"
-						+ "		cell" + aux + ".setCellFormula(\"" + data.getFormulaValue() + "\");\n" + "\n"
-						+ "		CellValue c" + aux + " = evaluator" + aux + ".evaluate(cell" + aux + ");\n" + "		\n"
-						+ "		excelFile" + aux + ".close();\n" + "		workbook" + aux + ".close();";
+						+ "		Cell cell" + aux + " = workbook" + aux + ".getSheet(\"" + service.getName()
+						+ "\").getRow(aux).getCell(" + aux + ");\n" + "		cell" + aux + ".setCellFormula(\""
+						+ data.getFormulaValue() + "\");\n" + "\n" + "		CellValue c" + aux + " = evaluator" + aux
+						+ ".evaluate(cell" + aux + ");\n" + "					FileOutputStream fileOut" + aux
+						+ " = new FileOutputStream(\"target\\\\ExcelDB.xlsx\");\n" + "					workbook" + aux
+						+ ".write(fileOut" + aux + ");		excelFile" + aux + ".close();\n"
+						+ "		workbook0.close();		\n" + "		excelFile" + aux + ".close();\n"
+						+ "		workbook" + aux + ".close();";
 
 				str += "					valor.set" + data.getName() + "(\"\" + c" + aux + ".getNumberValue());\n";
 				aux++;

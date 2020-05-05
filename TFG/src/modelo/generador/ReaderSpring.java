@@ -44,11 +44,9 @@ public class ReaderSpring implements Reader {
 	 */
 	@Override
 	public void read(String rutaEntrada) throws IOException {
-
 		file = new File(rutaEntrada);
 		init();
 		readSheet();
-
 	}
 
 	/**

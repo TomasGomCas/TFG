@@ -400,9 +400,8 @@ public class WritterSpring implements Writter {
 						+ data.getFormulaValue() + "\");\n" + "\n" + "		CellValue c" + aux + " = evaluator" + aux
 						+ ".evaluate(cell" + aux + ");\n" + "					FileOutputStream fileOut" + aux
 						+ " = new FileOutputStream(\"target\\\\ExcelDB.xlsx\");\n" + "					workbook" + aux
-						+ ".write(fileOut" + aux + ");		excelFile" + aux + ".close();\n"
-						+ "		workbook0.close();		\n" + "		excelFile" + aux + ".close();\n"
-						+ "		workbook" + aux + ".close();";
+						+ ".write(fileOut" + aux + ");		excelFile" + aux + ".close();\n" + "				\n"
+						+ "		excelFile" + aux + ".close();\n" + "		workbook" + aux + ".close();";
 
 				str += "					valor.set" + data.getName() + "(\"\" + c" + aux + ".getNumberValue());\n";
 				aux++;
